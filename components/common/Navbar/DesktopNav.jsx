@@ -1,135 +1,169 @@
-"use client";
-import { useState } from 'react';
-import { motion } from 'framer-motion'; 
-
-import Logo from '@/components/ui/Logo';
-import NavItem from './NavItem';
-import DestinationsDropdown from './DestinationsDropdown';
-import PagesDropdown from './PagesDropdown';
-import ThemeToggle from './ThemeToggle';
-import CTAButton from './CTAButton';
-import { useNavScroll } from '@/hooks/useNavScroll';
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { FaShoppingBag, FaChevronDown } from 'react-icons/fa';
+import { Moon, Sun } from 'lucide-react';
 import ItineraryForm from '@/components/ui/forms/ItineraryForm';
+import { useTheme } from '@/context/ThemeContext';
 import { useDestination } from '@/context/DestinationContext';
 
-export default function DesktopNav() {
-  const { isScrolled } = useNavScroll();
-  const [activeDropdown, setActiveDropdown] = useState(null);
+const DesktopNav = () => {
+  const [dropdown, setDropdown] = useState(null); // ✅ fixed: removed type annotation
+  const [isSticky, setIsSticky] = useState(false);
   const { destinationName } = useDestination();
+  const { theme, toggleTheme } = useTheme();
 
-  const closeDropdowns = () => setActiveDropdown(null);
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > window.innerHeight * 0.2);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const menus = [
+    { label: 'Home', links: ['Home'] },
+    {
+      label: 'Destination',
+      links: ['Destination', 'India', 'Abroad', 'Neighbouring Countries'],
+    },
+    { label: 'Pages', links: ['About'] },
+  ];
+
+  const getPath = (link) => {
+    switch (link) {
+      case 'Home':
+        return '/';
+      case 'Destination':
+        return '/destinations';
+      case 'India':
+        return '/destinations/india';
+      case 'Abroad':
+        return '/destinations/abroad';
+      case 'Neighbouring Countries':
+        return '/destinations/neighbouring-countries';
+      case 'About':
+        return '/about';
+      default:
+        return '#';
+    }
+  };
 
   return (
-    <>
-      {/* Navigation Bar */}
-      <nav 
-        className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
-        }`}
-        style={{ 
-          top: isScrolled ? '0' : '40px',
-          transition: 'top 0.3s ease'
-        }}
-      >
-        <div className="container mx-auto flex justify-between items-center px-4 sm:px-6">
-          <Logo isScrolled={isScrolled} />
-          
-          <div className="flex items-center space-x-4 sm:space-x-6 md:space-x-8">
-            <NavItem 
-              title="Home"
-              href="/"
-              isScrolled={isScrolled}
-            />
-            
-            <NavItem
-              title="Destinations"
-              isScrolled={isScrolled}
-              dropdown={
-                <DestinationsDropdown 
-                  isOpen={activeDropdown === 'Destinations'}
-                  onClose={closeDropdowns}
-                />
-              }
-              onMouseEnter={() => setActiveDropdown('Destinations')}
-              onMouseLeave={closeDropdowns}
-            />
-            
-            <NavItem
-              title="Pages"
-              isScrolled={isScrolled}
-              dropdown={
-                <PagesDropdown 
-                  isOpen={activeDropdown === 'Pages'}
-                  onClose={closeDropdowns}
-                />
-              }
-              onMouseEnter={() => setActiveDropdown('Pages')}
-              onMouseLeave={closeDropdowns}
-            />
-            
-            <NavItem
-              title="Contact"
-              href="/contact"
-              isScrolled={isScrolled}
-            />
-            
-            <ThemeToggle isScrolled={isScrolled} />
-            <CTAButton isScrolled={isScrolled} />
-          </div>
-        </div>
-      </nav>
+    <div className="relative w-full h-screen overflow-hidden ">
+   <header
+  className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+    isSticky ? 'py-2 bg-white dark:bg-gray-900 shadow-md' : 'py-4 bg-transparent'
+  }`}
+>
+  <div className="container mx-auto flex items-center justify-between px-6">
+    <Link href="/">
+      <Image
+        src="/images/logos/craft.webp"
+        alt="Crafted Vacays"
+        width={120}
+        height={60}
+        className="h-[60px] cursor-pointer"
+      />
+    </Link>
 
-      {/* Hero Section */}
-      <div 
-        className="relative h-screen w-full bg-cover bg-center"
-        style={{ 
-          marginTop: isScrolled ? '60px' : '120px',
-          backgroundImage: "url('/images/hero-bg.jpg')"
-        }}
-      >
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/50 z-0" />
-        
-        {/* Hero Content Container */}
-        <div className="relative h-full w-full max-w-7xl mx-auto px-4 sm:px-6">
-          {/* Hero Text - Left Side */}
-          <div className="absolute left-4 sm:left-10 bottom-10 z-10 max-w-2xl text-white">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4"
-            >
-              {destinationName ? `Explore ${destinationName}` : 'Welcome to TravelCraft'}
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-base sm:text-lg mb-6"
-            >
-              {destinationName 
-                ? `Discover the best of ${destinationName} with our curated travel experiences.` 
-                : 'Your journey begins here with our handcrafted travel experiences worldwide.'}
-            </motion.p>
-          </div>
+    {/* Main Navigation */}
+    <nav className="hidden xl:flex space-x-6 z-50">
+      {menus.map((menu, idx) => (
+        <div
+          key={idx}
+          className="relative group"
+          onMouseEnter={() => setDropdown(menu.label)}
+          onMouseLeave={() => setDropdown(null)}
+        >
+          <button className="text-gray-900 dark:text-white font-medium px-3 py-1 flex items-center transition duration-300 z-50 rounded-md group-hover:bg-orange-500">
+            {menu.label}
+            <FaChevronDown
+              className={`ml-2 transition-transform duration-300 ${
+                dropdown === menu.label ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
 
-          {/* Itinerary Form - Right Middle */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="absolute top-1/2 right-4 sm:right-10 transform -translate-y-1/2 z-10 w-full max-w-md"
+          {/* Dropdown */}
+          <ul
+            className={`absolute left-0 top-full w-[260px] text-left p-6 border-t-4 border-orange-500 bg-black dark:bg-gray-800 shadow-lg origin-top transform transition-all duration-500 ease-out z-50 ${
+              dropdown === menu.label
+                ? 'opacity-100 visible'
+                : 'opacity-0 invisible'
+            }`}
           >
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                Plan Your Trip
-              </h3>
-              <ItineraryForm />
-            </div>
-          </motion.div>
+            {menu.links.map((link, i) => (
+              <li key={i} className="relative">
+                <Link
+                  href={getPath(link)}
+                  className="relative flex items-center w-full pl-4 py-2 text-white dark:text-white transition-all duration-300 hover:pl-6 peer"
+                >
+                  {link}
+                </Link>
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-[2px] bg-orange-500 opacity-0 transition-all duration-300 peer-hover:opacity-100"></span>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-    </>
+      ))}
+      <Link
+        href="/contact"
+        className="text-gray-900 dark:text-white font-medium px-4 py-2 hover:bg-orange-500 hover:text-white transition duration-300 rounded-md"
+      >
+        Contact
+      </Link>
+    </nav>
+
+    {/* Cart & Theme Toggle */}
+    <div className="flex items-center space-x-4">
+      <Link href="/cart" className="text-gray-900 dark:text-white text-xl">
+        <FaShoppingBag />
+      </Link>
+      <Link
+        href="/contact"
+        className="bg-orange-500 text-white px-4 py-2 rounded-md font-medium"
+      >
+        Contact Us
+      </Link>
+      <button
+        onClick={toggleTheme}
+        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+        aria-label="Toggle Theme"
+      >
+        {theme === 'dark' ? (
+          <Sun className="text-yellow-400" />
+        ) : (
+          <Moon className="text-gray-800" />
+        )}
+      </button>
+    </div>
+  </div>
+</header>
+
+
+      {/* Itinerary Form Overlayed on Video or Background */}
+      <section className="relative h-screen overflow-auto bg-cover bg-center">
+        <div className="absolute bottom-10 top-1/2 right-6 z-10 w-[400px] max-w-[90%]">
+          <ItineraryForm />
+        </div>
+      </section>
+
+      {/* Hero Intro Text */}
+      <div className="intro absolute left-10 bottom-10 z-10 max-w-[600px] text-white">
+<h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
+        {destinationName ? `Explore ${destinationName}` : 'Welcome to Crafted Vacays'}
+      </h1>
+  <p className="text-white text-lg mb-6">
+    Indulge in luxury with our  {destinationName ? `Explore ${destinationName}` : 'Welcome to Crafted Vacays'} tour packages. Tailored for perfection, explore pristine beaches, vibrant coral reefs, and exclusive resorts. Book your dream escape!
+  </p>
+  <div className="button-group flex flex-wrap items-center gap-3">
+   
+  </div>
+</div>
+    </div>
   );
-}
+};
+
+export default DesktopNav;

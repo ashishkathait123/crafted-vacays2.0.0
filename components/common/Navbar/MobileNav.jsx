@@ -1,16 +1,17 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Moon, Sun, ChevronDown, ChevronUp } from "lucide-react";
-import { FaShoppingBag } from "react-icons/fa";
 import ItineraryForm from "@/components/ui/forms/ItineraryForm";
-import { useTheme } from "@/context/ThemeContext";
 import { useDestination } from "@/context/DestinationContext";
-import Logo from "@/public/images/logos/craft.webp";
+import { FaShoppingBag } from "react-icons/fa";
+import { useTheme } from "@/context/ThemeContext";
 
-export default function MobileNav({ isMenuOpen, setIsMenuOpen }) {
+const MobileNav = ({ isMenuOpen, setIsMenuOpen }) => {
   const [showForm, setShowForm] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+
   const { theme, toggleTheme } = useTheme();
   const { destinationName } = useDestination();
 
@@ -19,145 +20,163 @@ export default function MobileNav({ isMenuOpen, setIsMenuOpen }) {
     {
       name: "Destination",
       subLinks: [
-        { label: "All Destinations", href: "/destinations" },
+        { label: "Destination", href: "/destinations" },
+        { label: "Details", href: "/destinations/thailand" },
         { label: "India", href: "/destinations/india" },
-        { label: "Kashmir", href: "/destinations/kashmir" },
-        { label: "Andamans", href: "/destinations/andamans" },
         { label: "Abroad", href: "/destinations/abroad" },
-        { label: "Neighbouring", href: "/destinations/neighbouring" }
+        { label: "Neighbouring Countries", href: "/destinations/neighbouring-countries" },
       ],
     },
     {
       name: "Pages",
       subLinks: [
-        { label: "About Us", href: "/about" },
-        { label: "Contact Us", href: "/contact" },
-        { label: "Blog", href: "/blog" }
+        { label: "About", href: "/about-us" },
       ],
     },
     { name: "Contact", href: "/contact-us" },
   ];
 
   const handleDropdownToggle = (name) => {
-    setOpenDropdown(prev => (prev === name ? null : name));
+    setOpenDropdown((prev) => (prev === name ? null : name));
   };
 
   return (
-    <>
-      {/* Mobile Menu Button (shown only on mobile) */}
-      <button 
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="lg:hidden p-2 focus:outline-none"
-        aria-label="Toggle menu"
-      >
-        {isMenuOpen ? (
-          <X className="w-6 h-6" />
-        ) : (
-          <Menu className="w-6 h-6" />
-        )}
-      </button>
+    <div className="relative w-full h-screen bg-cover bg-center overflow-hidden">
+      {/* Navbar */}
+      <header className="fixed top-0 left-0 w-full z-50 bg-white dark:bg-black shadow-md py-4 px-6 flex justify-between items-center">
+        <Link href="/">
+          <img src="/images/logos/craft.webp" alt="Logo" className="h-[50px]" />
+        </Link>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-40">
-          {/* Background Overlay */}
-          <div
-            onClick={() => setIsMenuOpen(false)}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          />
+        <div className="flex items-center gap-4">
+          {/* Cart Icon */}
+          <Link href="/cart" className="text-xl text-black dark:text-white">
+            <FaShoppingBag />
+          </Link>
 
-          {/* Mobile Menu Panel */}
-          <div
-            className={`absolute top-0 left-0 h-full w-4/5 max-w-sm bg-white dark:bg-gray-900 shadow-xl transform transition-transform duration-300 ${
-              isMenuOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition"
           >
-            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-              <Logo />
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="p-2 text-gray-500 dark:text-gray-400"
-                aria-label="Close menu"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+            {theme === "dark" ? <Sun className="text-yellow-400" /> : <Moon className="text-gray-800" />}
+          </button>
 
-            <nav className="p-4 overflow-y-auto h-[calc(100%-60px)]">
-              {navLinks.map((link, index) => (
-                <div key={index} className="mb-2">
-                  {!link.subLinks ? (
-                    <Link
-                      href={link.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="block py-3 px-2 text-lg font-medium text-gray-800 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400"
-                    >
-                      {link.name}
-                    </Link>
-                  ) : (
-                    <div className="mb-2">
-                      <button
-                        onClick={() => handleDropdownToggle(link.name)}
-                        className="flex items-center justify-between w-full py-3 px-2 text-lg font-medium text-gray-800 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400"
-                      >
-                        {link.name}
-                        {openDropdown === link.name ? (
-                          <ChevronUp className="w-5 h-5" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5" />
-                        )}
-                      </button>
-
-                      <div
-                        className={`pl-4 overflow-hidden transition-all duration-300 ${
-                          openDropdown === link.name ? "max-h-96" : "max-h-0"
-                        }`}
-                      >
-                        {link.subLinks.map((sub, idx) => (
-                          <Link
-                            key={idx}
-                            href={sub.href}
-                            onClick={() => setIsMenuOpen(false)}
-                            className="block py-2 px-2 text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400"
-                          >
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              <button
-                onClick={() => {
-                  setShowForm(true);
-                  setIsMenuOpen(false);
-                }}
-                className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
-              >
-                Plan Your Trip
-              </button>
-            </nav>
-          </div>
+          {/* Menu Toggle */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 text-black dark:text-white"
+          >
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
+      </header>
+
+      {/* Background Overlay */}
+      {isMenuOpen && (
+        <div
+          onClick={() => setIsMenuOpen(false)}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity duration-300"
+        />
       )}
+
+      {/* Mobile Menu */}
+      <div
+        className={`fixed top-0 left-0 h-full w-[80%] bg-white dark:bg-gray-900 z-40 p-6 transition-all duration-500 ease-in-out transform ${
+          isMenuOpen ? "translate-x-0 scale-100 opacity-100" : "-translate-x-full scale-90 opacity-0"
+        }`}
+      >
+        <nav className="flex flex-col gap-4 mt-16">
+          {navLinks.map((link, index) => (
+            <div key={index}>
+              {!link.subLinks ? (
+                // Simple link
+                <Link
+                  href={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-lg font-medium transition-all block ${
+                    isMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+                  } text-black dark:text-white`}
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                // Dropdown link
+                <div>
+                  <button
+                    onClick={() => handleDropdownToggle(link.name)}
+                    className="flex items-center justify-between w-full text-lg font-medium py-2 text-black dark:text-white"
+                  >
+                    {link.name}
+                    {openDropdown === link.name ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    )}
+                  </button>
+
+                  <div
+                    className={`flex flex-col pl-4 gap-2 overflow-hidden transition-all ${
+                      openDropdown === link.name ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    {link.subLinks.map((sub, idx) => (
+                      <Link
+                        key={idx}
+                        href={sub.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-base text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400"
+                      >
+                        {sub.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Plan Your Trip Button */}
+          <button
+            onClick={() => {
+              setShowForm(true);
+              setIsMenuOpen(false);
+            }}
+            className="bg-orange-500 text-white px-4 py-2 rounded-md font-medium mt-6"
+          >
+            Plan Your Trip
+          </button>
+        </nav>
+      </div>
+
+      {/* Hero Section */}
+      <div className="absolute left-6 bottom-24 z-10 max-w-[90%] text-white px-4">
+        <h1 className="text-3xl sm:text-4xl font-bold leading-tight mb-3">
+          {destinationName ? `Explore ${destinationName}` : "Welcome to Crafted Vacays"}
+        </h1>
+        <p className="text-white text-base sm:text-lg mb-4">
+          Indulge in luxury with our{" "}
+          {destinationName ? `Explore ${destinationName}` : "Welcome to Crafted Vacays"} tour packages. Tailored for
+          perfection, explore pristine beaches, vibrant coral reefs, and exclusive resorts. Book your dream escape!
+        </p>
+      </div>
+
+      {/* Floating Button */}
+      <button
+        onClick={() => setShowForm(true)}
+        className="hidden sm:block fixed bottom-6 right-6 bg-orange-500 text-white px-5 py-3 rounded-full shadow-lg z-[60]"
+      >
+        Plan My Trip
+      </button>
 
       {/* Itinerary Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-md mx-4">
-            <button
-              onClick={() => setShowForm(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              aria-label="Close form"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <ItineraryForm onClose={() => setShowForm(false)} />
-          </div>
+          <ItineraryForm onClose={() => setShowForm(false)} />
         </div>
       )}
-    </>
+    </div>
   );
-}
+};
+
+export default MobileNav;

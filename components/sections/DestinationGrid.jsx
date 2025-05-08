@@ -1,8 +1,7 @@
 "use client";
-
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DestinationCard from "@/components/ui/cards/DestinationCard";
 import Image from "next/image";
 
@@ -16,6 +15,15 @@ const bgImages = [
 export default function DestinationGrid({ destinations }) {
   const controls = useAnimation();
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Rotate background images every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % bgImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (inView) {
@@ -24,12 +32,13 @@ export default function DestinationGrid({ destinations }) {
   }, [controls, inView]);
 
   return (
-    <div className="relative">
-      {/* Fixed Background Section */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
+    <div className="relative min-h-screen">
+      {/* Background Container (not fixed) */}
+      <div className="absolute inset-0 -z-10">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
           style={{
-            backgroundImage: `url(${bgImages[0]})`, // Using first image as fixed background
+            backgroundImage: `url(${bgImages[currentImageIndex]})`,
           }}
         >
           {/* Dark overlay */}
@@ -43,7 +52,13 @@ export default function DestinationGrid({ destinations }) {
             animate={{ y: ["0%", "-10%", "0%"] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Image src="/images/bg/Ballon-1.webp" alt="Balloon" width={110} height={150} />
+            <Image 
+              src="/images/bg/Ballon-1.webp" 
+              alt="Balloon" 
+              width={110} 
+              height={150}
+              priority
+            />
           </motion.div>
 
           <motion.div
@@ -51,19 +66,25 @@ export default function DestinationGrid({ destinations }) {
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           >
-            <Image src="/images/bg/star.webp" alt="Star" width={70} height={70} />
+            <Image 
+              src="/images/bg/star.webp" 
+              alt="Star" 
+              width={70} 
+              height={70}
+              priority
+            />
           </motion.div>
         </div>
       </div>
 
-      {/* Content Section with Scroll */}
-      <div className="relative z-10 pt-20 pb-32 min-h-screen">
+      {/* Content Section */}
+      <div className="relative z-10 pt-20 pb-32">
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={controls}
           transition={{ duration: 1 }}
-          className="relative z-10 text-center mb-12"
+          className="text-center mb-12"
         >
           <h2 className="text-4xl font-bold text-white">
             Explore Our Top Destinations
