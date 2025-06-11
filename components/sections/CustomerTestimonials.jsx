@@ -14,28 +14,28 @@ const testimonialData = [
   {
     type: 'text',
     name: 'Dinesh Dharmaraj',
-    image: '/images/d3.jpg',
+    image: '/images/bg/n4.jpg',
     review: 'We enjoyed our Thailand trip by Dimaak Chennai team. Good accommodation, food & well organized!',
   },
   {
     type: 'image',
-    imageUrl: '/images/d3.jpg',
+    imageUrl: '/images/bg/n3.jpg',
   },
   {
     type: 'text',
     name: 'Kanchan Singh',
-    image: '/images/d3.jpg',
+    image: '/images/bg/n3.jpg',
     review: 'My first international trip with Dimaak was amazing! Loved the new year festivities in Thailand.',
   },
   {
     type: 'video',
-    thumbnail: '/images/d3.jpg',
+    thumbnail: '/images/bg/n2.jpg',
     videoUrl: 'https://youtu.be/i2aH11Ui95Q?si=z7cMVawLrVLmivDD',
   },
   {
     type: 'text',
     name: 'Divya Madhuchandran',
-    image: '/images/d3.jpg',
+    image: '/images/n1.jpg',
     review: 'We had visited Krabi and Phuket for our honeymoon through Dimaak and loved the entire experience.',
   },
 ];
@@ -64,7 +64,7 @@ const CustomerTestimonials = () => {
               View More Reviews
             </button>
             <img
-              src="/images/gr.svg"
+              src="/images/about/gr.svg"
               alt="Google Review"
               className="h-8"
             />

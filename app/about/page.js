@@ -4,7 +4,7 @@ import Image from 'next/image';
 import CountUp from 'react-countup';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-
+import VideoSection from '@/components/sections/videoSection';
 export default function AboutUs() {
   const [startCount, setStartCount] = useState(false);
 
@@ -153,7 +153,10 @@ export default function AboutUs() {
             </motion.div>
           </motion.div>
         </div>
+               
+
       </section>
+       <VideoSection />
     </main>
   );
 }
