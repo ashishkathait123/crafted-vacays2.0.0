@@ -91,10 +91,9 @@ const TourPackage = ({ filters }) => {
                   discountedPrice: `${currencySymbol}${convertPrice(
                     parseFloat(pkg.price)
                   ).toFixed(2)}`,
-                 images: pkg.images?.length
+                images: pkg.images?.length
   ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
   : ["/images/bg/default.jpg"]
-
                 }}
                 onClick={() => router.push(`/tour-details/${pkg.slug}`)}
               />

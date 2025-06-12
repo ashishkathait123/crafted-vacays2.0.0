@@ -31,7 +31,7 @@ const DescriptionBox = ({ title, description, extraContent }) => {
                 rel="noopener noreferrer"
                 className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-full flex items-center gap-2"
               >
-                <img src="/images/whatsapp.png" alt="WhatsApp" className="w-5 h-5" />
+                <img src="/assets/icons/whatsapp.png" alt="WhatsApp" className="w-5 h-5" />
                 Get Quote
               </a>
 
@@ -41,7 +41,7 @@ const DescriptionBox = ({ title, description, extraContent }) => {
               >
                 View Less
                 <img
-                  src="/images/arrow-right.png"
+                  src="/assets/icons/arrow-right.png"
                   alt="Toggle arrow"
                   className="w-5 h-5 rotate-180 transition-transform duration-200"
                 />
@@ -56,7 +56,7 @@ const DescriptionBox = ({ title, description, extraContent }) => {
             >
               View More
               <img
-                src="/images/arrow-right.png"
+                src="/assets/icons/arrow-right.png"
                 alt="Toggle arrow"
                 className="w-5 h-5 transition-transform duration-200"
               />

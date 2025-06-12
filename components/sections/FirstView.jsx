@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import DescriptionBox from '../ui/blocks/DescriptionBox';
 import EnquiryBlock from '../ui/blocks/EnquiryBlock';
-
+import TourPackageCard from '../ui/cards/TourCard';
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
@@ -13,63 +13,51 @@ const fadeInUp = {
 
 const FirstView = () => {
   const params = useParams();
-const countrySlug = params?.slug;  
-const stateSlug = params?.place;    
-
-
+  const countrySlug = params?.slug;
+  const stateSlug = params?.place;
 
   const [stateData, setStateData] = useState(null);
+  const [relatedTours, setRelatedTours] = useState([]);
   const [loading, setLoading] = useState(true);
-useEffect(() => {
-  console.log("countrySlug:", countrySlug); // ✅ should be "india"
-  console.log("stateSlug:", stateSlug);     // ✅ should be "himachal"
 
-  if (!countrySlug || !stateSlug) {
-    console.warn("Missing country/state in URL.");
-    setLoading(false);
-    return;
-  }
+  useEffect(() => {
+    if (!countrySlug || !stateSlug) {
+      console.warn("Missing country/state in URL.");
+      setLoading(false);
+      return;
+    }
 
-  fetch('https://craftedvacays.grandeurnet.in/get-tours.php')
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("API response:", data);
+    fetch('https://craftedvacays.grandeurnet.in/get-tours.php')
+      .then((res) => res.json())
+      .then((data) => {
+        const destination = data.destinations.find(
+          (d) => d.name?.toLowerCase() === countrySlug.toLowerCase()
+        );
 
-      const destination = data.destinations.find(
-        (d) => d.name?.toLowerCase() === countrySlug.toLowerCase()
-      );
+        if (!destination) {
+          console.warn('Destination not found for country:', countrySlug);
+          setLoading(false);
+          return;
+        }
 
-      console.log("Matched destination:", destination);
+        const matchedState = destination.states.find(
+          (s) => s.slug?.toLowerCase() === stateSlug.toLowerCase()
+        );
 
-      if (!destination) {
-        console.warn('Destination not found for country:', countrySlug);
+        if (matchedState) {
+          setStateData(matchedState);
+          setRelatedTours(matchedState.tours || []);
+        } else {
+          console.warn("State not found:", stateSlug);
+        }
+
         setLoading(false);
-        return;
-      }
-
-      const matchedState = destination.states.find(
-        (s) => s.slug?.toLowerCase() === stateSlug.toLowerCase()
-      );
-
-      console.log("Matched state:", matchedState);
-
-      if (matchedState) {
-        setStateData(matchedState);
-      } else {
-        console.warn("State not found:", stateSlug);
-      }
-
-      setLoading(false);
-    })
-    .catch((err) => {
-      console.error('Error fetching state data:', err);
-      setLoading(false);
-    });
-}, [countrySlug, stateSlug]);
-
-
-
-
+      })
+      .catch((err) => {
+        console.error('Error fetching state data:', err);
+        setLoading(false);
+      });
+  }, [countrySlug, stateSlug]);
 
   if (loading) {
     return (
@@ -89,7 +77,6 @@ useEffect(() => {
 
   return (
     <div className="container mx-auto px-4 py-10">
-      {/* Hero Section */}
       <motion.div
         className="max-w-5xl mx-auto"
         initial={{ opacity: 0, y: 30 }}
@@ -112,7 +99,6 @@ useEffect(() => {
         </p>
       </motion.div>
 
-      {/* Gallery */}
       {stateData.cities?.length > 0 && (
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"
@@ -137,37 +123,41 @@ useEffect(() => {
         </motion.div>
       )}
 
-      {/* Description Section */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeInUp}
-      >
-      <DescriptionBox
-  title={stateData.name}
-  description={stateData.description}
-  extraContent={stateData.short_description}
-/>
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
+        <DescriptionBox
+          title={stateData.name}
+          description={stateData.description}
+          extraContent={stateData.short_description}
+        />
       </motion.div>
 
-      {/* Enquiry Section */}
-      <motion.div
-        className="mt-10"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={fadeInUp}
-      >
+      <motion.div className="mt-10" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
         <EnquiryBlock
           title={`Explore ${stateData.name} with us!`}
           description="Reach out to plan your unforgettable journey."
           buttonText="Send Enquiry"
           buttonLink="https://wa.me/918192812557?text=Hi%20Crafted%20Vacays%2C%20I'm%20interested%20in%20this%20state."
-          imageSrc="/images/thailand-cta-1.png"
+          imageSrc="/assets/icons/thailand-cta-1.png"
           imageAlt="Promotional"
         />
       </motion.div>
+
+      {relatedTours.length > 0 && (
+        <motion.div
+          className="mt-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+        >
+          <h2 className="text-3xl font-semibold mb-6 text-center text-primary">Related Tour Packages</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedTours.map((tour, idx) => (
+              <TourPackageCard key={idx} tour={tour} />
+            ))}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+i
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -60,3 +60,13 @@ html {
   --navbar-height: 80px;
 }
 
+.react-calendar__tile.available-date {
+  background: #e6ffed !important;
+  border: 1px solid #00c853;
+  border-radius: 8px;
+}
+
+.slick-slide img:hover {
+  transform: scale(1.03);
+  transition: transform 0.5s ease-in-out;
+}
