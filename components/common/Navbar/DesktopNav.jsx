@@ -26,7 +26,7 @@ const DesktopNav = () => {
     { label: 'Home', links: ['Home'] },
     {
       label: 'Destination',
-      links: ['Destination', 'India', 'Abroad', 'Neighbouring Countries'],
+      links: ['Destination', 'India', 'US', 'Neighbouring Countries'],
     },
     { label: 'Pages', links: ['About'] },
   ];
@@ -40,7 +40,7 @@ const DesktopNav = () => {
       case 'India':
         return '/destinations/india';
       case 'Abroad':
-        return '/destinations/abroad';
+        return '/destinations/US';
       case 'Neighbouring Countries':
         return '/destinations/neighbouring-countries';
       case 'About':

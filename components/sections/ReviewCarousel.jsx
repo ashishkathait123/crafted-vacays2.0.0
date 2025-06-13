@@ -16,7 +16,7 @@ const dummyReviews = [
   },
   {
     name: 'Dinesh Dharmaraj',
-    review: 'We enjoyed our Thailand trip by Dimaak Chennai team...',
+    review: 'We enjoyed our Thailand trip by Crafted vacasys Chennai team...',
     image: '/images/d8.jpg',
   },
   {

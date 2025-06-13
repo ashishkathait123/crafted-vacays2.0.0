@@ -8,7 +8,7 @@ import {
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
 
-const BookingForm = ({ basePrice = 1200 }) => {
+const BookingForm = ({ basePrice = 1200, tourTitle }) => {
   const [ticketCounts, setTicketCounts] = useState({
     adult: 1,
     youth: 0,
@@ -63,7 +63,7 @@ const templateParams = {
   user_email: userEmail,
   email: 'ashish2kathait@gmail.com', // ✅ This matches {{email}} in your template
 
-  tour_name: 'Crafted Vacays Tour',
+tour_name: tourTitle,
   tour_date: selectedDate,
   tour_time: selectedTime,
 

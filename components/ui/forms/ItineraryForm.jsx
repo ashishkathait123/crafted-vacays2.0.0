@@ -85,17 +85,17 @@ export default function ItineraryForm({ onClose }) {
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative z-50 bg-gradient-to-br from-white via-orange-50 to-white p-6 rounded-xl shadow-xl w-full max-w-md backdrop-blur-md"
+      className="relative z-150 bg-gradient-to-br from-white via-orange-50 to-white p-6 rounded-xl shadow-xl w-full max-w-md backdrop-blur-md"
     >
-      {isMobile && onClose && (
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl font-bold"
-          aria-label="Close form"
-        >
-          &times;
-        </button>
-      )}
+     {onClose && (
+  <button
+    onClick={onClose}
+    className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl font-bold"
+    aria-label="Close form"
+  >
+    &times;
+  </button>
+)}
 
       <div className="mb-6">
         <motion.h2 className="text-lg italic font-semibold text-gray-700">Let's Plan Your Escape</motion.h2>

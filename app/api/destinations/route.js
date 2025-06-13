@@ -15,11 +15,9 @@ export async function GET() {
 
     data.destinations.forEach((country) => {
       const countrySlug = generateSlug(country.name);
-      console.log(`Processing country: ${country.name} (${countrySlug})`);
 
       country.states?.forEach((state) => {
         const stateSlug = generateSlug(state.name);
-        console.log(`  Processing state: ${state.name} (${stateSlug})`);
 
         destinations.push({
           id: state.id,
@@ -39,7 +37,7 @@ export async function GET() {
 
         state.cities?.forEach((city) => {
           const citySlug = generateSlug(city.name);
-          console.log(`    Processing city: ${city.name} (${citySlug})`);
+          (`    Processing city: ${city.name} (${citySlug})`);
 
           destinations.push({
             id: city.id,
@@ -60,7 +58,7 @@ export async function GET() {
       });
     });
 
-    console.log('Final destinations output:', JSON.stringify(destinations, null, 2));
+    ('Final destinations output:', JSON.stringify(destinations, null, 2));
 
     return new Response(JSON.stringify(destinations), { status: 200 });
   } catch (error) {

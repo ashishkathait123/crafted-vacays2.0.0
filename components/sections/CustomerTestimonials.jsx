@@ -15,7 +15,7 @@ const testimonialData = [
     type: 'text',
     name: 'Dinesh Dharmaraj',
     image: '/images/bg/n4.jpg',
-    review: 'We enjoyed our Thailand trip by Dimaak Chennai team. Good accommodation, food & well organized!',
+    review: 'We enjoyed our Thailand trip by Crafted vacasys Chennai team. Good accommodation, food & well organized!',
   },
   {
     type: 'image',
@@ -25,7 +25,7 @@ const testimonialData = [
     type: 'text',
     name: 'Kanchan Singh',
     image: '/images/bg/n3.jpg',
-    review: 'My first international trip with Dimaak was amazing! Loved the new year festivities in Thailand.',
+    review: 'My first international trip with Crafted vacasys was amazing! Loved the new year festivities in Thailand.',
   },
   {
     type: 'video',
@@ -36,7 +36,7 @@ const testimonialData = [
     type: 'text',
     name: 'Divya Madhuchandran',
     image: '/images/n1.jpg',
-    review: 'We had visited Krabi and Phuket for our honeymoon through Dimaak and loved the entire experience.',
+    review: 'We had visited Krabi and Phuket for our honeymoon through Crafted vacasys and loved the entire experience.',
   },
 ];
 
