@@ -1,38 +1,16 @@
-// app/contact/page.jsx
 "use client";
 
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-// Dynamically import Map components with SSR disabled
-const MapContainer = dynamic(
-  () => import('react-leaflet').then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import('react-leaflet').then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Popup),
-  { ssr: false }
-);
+// Dynamically import Leaflet components without SSR
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 
 // Animation variants
-const sectionVariant = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (custom) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: custom },
-  }),
-};
-
 const fadeUpVariant = {
   hidden: { opacity: 0, y: 50 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
@@ -47,9 +25,20 @@ const staggerContainer = {
   },
 };
 
+const sectionVariant = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: 0.2 },
+  },
+};
+
 export default function ContactUs() {
-  // Fix Leaflet CSS (must be loaded client-side)
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     import('leaflet/dist/leaflet.css');
   }, []);
 
@@ -72,27 +61,21 @@ export default function ContactUs() {
                   Get in Touch
                 </h2>
                 <form className="space-y-4">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Your Name"
-                      className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="email"
-                      placeholder="Your Email"
-                      className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-                    />
-                  </div>
-                  <div>
-                    <textarea
-                      placeholder="Your Message"
-                      rows={5}
-                      className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Your Email"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                  />
+                  <textarea
+                    placeholder="Your Message"
+                    rows={5}
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                  />
                   <button
                     type="submit"
                     className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors duration-300 w-full md:w-auto"
@@ -114,7 +97,6 @@ export default function ContactUs() {
               <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
                 Contact Information
               </h2>
-              
               {[
                 {
                   icon: '🕒',
@@ -169,22 +151,20 @@ export default function ContactUs() {
         </div>
       </section>
 
-      {/* Map Section */}
+      {/* Map Section (Hydration-safe) */}
       <section className="pb-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            custom={0.2}
             variants={sectionVariant}
           >
             <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">
               Our Location
             </h2>
             <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg">
-              {/* Only render map on client-side */}
-              {typeof window !== 'undefined' && (
+              {mounted && (
                 <MapContainer
                   center={[28.6139, 77.209]}
                   zoom={13}

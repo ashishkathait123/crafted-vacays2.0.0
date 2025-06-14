@@ -21,6 +21,9 @@ import {
 import { useRouter } from 'next/navigation';
 import StarIcon from "@mui/icons-material/Star";
 import FilterListIcon from '@mui/icons-material/FilterList';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import PlaceIcon from '@mui/icons-material/Place';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { styled } from '@mui/material/styles';
 
 // === STYLES ===
@@ -34,10 +37,11 @@ const StyledTourCard = styled(Paper)(({ theme }) => ({
     flexDirection: 'row',
   },
   overflow: 'hidden',
+  borderRadius: '12px',
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[6],
+    transform: 'translateY(-8px)',
+    boxShadow: '0 15px 30px rgba(0,0,0,0.12)',
   },
   marginBottom: theme.spacing(3),
 }));
@@ -45,10 +49,10 @@ const StyledTourCard = styled(Paper)(({ theme }) => ({
 const TourImage = styled('div')(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.up('sm')]: {
-    width: '300px',
-    minWidth: '300px',
+    width: '350px',
+    minWidth: '350px',
   },
-  height: '200px',
+  height: '250px',
   overflow: 'hidden',
   position: 'relative',
   backgroundColor: theme.palette.grey[800],
@@ -58,9 +62,23 @@ const TourImage = styled('div')(({ theme }) => ({
     objectFit: 'cover',
     transition: 'transform 0.5s ease',
     '&:hover': {
-      transform: 'scale(1.05)',
+      transform: 'scale(1.1)',
     },
   },
+}));
+
+const PopularBadge = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  top: '16px',
+  left: '16px',
+  backgroundColor: '#FF6600',
+  color: 'white',
+  padding: '4px 12px',
+  borderRadius: '20px',
+  fontSize: '12px',
+  fontWeight: 'bold',
+  zIndex: 1,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
 }));
 
 const FilterButton = styled(Button)(({ theme }) => ({
@@ -95,9 +113,9 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
         p: 3,
         bgcolor: 'background.paper',
         color: 'text.primary',
-        borderRadius: 2,
+        borderRadius: 3,
         border: `1px solid ${theme.palette.divider}`,
-        boxShadow: 1,
+        boxShadow: 3,
         display: isMobile ? (mobileOpen ? 'block' : 'none') : 'block',
         position: isMobile ? 'fixed' : 'static',
         top: 0,
@@ -118,13 +136,13 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
       )}
       
       <Typography variant="h6" fontWeight="bold" mb={2} sx={{ display: 'flex', alignItems: 'center' }}>
-        <FilterListIcon sx={{ mr: 1 }} /> Filters
+        <FilterListIcon sx={{ mr: 1 }} /> Find Your Perfect Trip
       </Typography>
       
       <Box mb={3}>
-        <Typography fontWeight="bold" mb={1}>Tour Type</Typography>
+        <Typography fontWeight="bold" mb={1} color="primary">Tour Type</Typography>
         <FormGroup>
-          {["Nature Tours", "Adventure Tours", "Cultural Tours", "Food Tours", "City Tours", "Cruises Tours"].map((type) => (
+          {["Nature Escapes", "Adventure Thrills", "Cultural Journeys", "Foodie Trails", "City Explorations", "Luxury Cruises"].map((type) => (
             <FormControlLabel
               key={type}
               control={
@@ -133,6 +151,7 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
                   checked={filters.type.includes(type)}
                   onChange={() => handleChange("type", type)}
                   sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
+                  color="primary"
                 />
               }
               label={<Typography variant="body2">{type}</Typography>}
@@ -144,7 +163,7 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
       <Divider sx={{ my: 2 }} />
 
       <Box mb={3}>
-        <Typography fontWeight="bold" mb={1}>Price Range</Typography>
+        <Typography fontWeight="bold" mb={1} color="primary">Price Range</Typography>
         <Slider
           value={filters.price}
           onChange={handlePriceChange}
@@ -152,7 +171,16 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
           max={70000}
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => `₹${value}`}
-          sx={{ color: 'primary.main', mb: 2 }}
+          sx={{ 
+            color: '#FF6600',
+            '& .MuiSlider-thumb': {
+              height: 20,
+              width: 20,
+              backgroundColor: '#fff',
+              border: '2px solid #FF6600',
+            },
+            mb: 2 
+          }}
         />
         <Box display="flex" justifyContent="space-between">
           <Typography variant="body2">₹{filters.price[0]}</Typography>
@@ -162,18 +190,31 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
           variant="contained" 
           size="small" 
           fullWidth
-          sx={{ mt: 2 }}
+          sx={{ 
+            mt: 2,
+            backgroundColor: '#FF6600', 
+            color: '#fff',
+            fontWeight: 'bold',
+            borderRadius: '8px',
+            py: 1,
+            '&:hover': { 
+              backgroundColor: '#e65c00',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 8px rgba(255,102,0,0.3)'
+            },
+            transition: 'all 0.3s ease'
+          }}
         >
-          Apply Price
+          Show Tours in This Range
         </Button>
       </Box>
 
       <Divider sx={{ my: 2 }} />
 
       <Box mb={3}>
-        <Typography fontWeight="bold" mb={1}>Rating</Typography>
+        <Typography fontWeight="bold" mb={1} color="primary">Rating</Typography>
         <FormGroup>
-          {[5, 4, 3, 2, 1].map((star) => (
+          {[5, 4, 3].map((star) => (
             <FormControlLabel
               key={star}
               control={
@@ -182,6 +223,7 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
                   checked={filters.rating.includes(star)}
                   onChange={() => handleChange("rating", star)}
                   sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
+                  color="primary"
                 />
               }
               label={
@@ -193,7 +235,7 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
                     size="small"
                     emptyIcon={<StarIcon fontSize="inherit" color="disabled" />}
                   />
-                  <Typography variant="body2" ml={1}>& Up</Typography>
+                  <Typography variant="body2" ml={1} color="text.secondary">{star === 5 ? 'Exceptional' : star === 4 ? 'Very Good' : 'Good'} & Up</Typography>
                 </Box>
               }
             />
@@ -207,9 +249,12 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
 // === TOUR CARD ===
 const TourCard = ({ tour }) => {
   const router = useRouter();
+  const isPopular = tour.rating >= 4.5;
+  
   return (
     <StyledTourCard elevation={3}>
       <TourImage>
+        {isPopular && <PopularBadge>POPULAR</PopularBadge>}
         <img
           src={tour.image}
           alt={tour.name}
@@ -218,30 +263,37 @@ const TourCard = ({ tour }) => {
           }}
         />
       </TourImage>
-      <Box sx={{ p: 3, flex: 1 }}>
-        <Typography variant="body2" color="primary" fontWeight="medium">
-          {tour.location}
-        </Typography>
-        <Typography variant="h6" fontWeight="bold" sx={{ mt: 0.5, mb: 1 }}>
+      <Box sx={{ p: 3, flex: 1, position: 'relative' }}>
+        <Box display="flex" alignItems="center" mb={0.5}>
+          <PlaceIcon fontSize="small" color="primary" />
+          <Typography variant="body2" color="primary" fontWeight="medium" ml={0.5}>
+            {tour.location}
+          </Typography>
+        </Box>
+        
+        <Typography variant="h5" fontWeight="bold" sx={{ mt: 0.5, mb: 1.5 }}>
           {tour.name}
         </Typography>
 
-        <Box display="flex" alignItems="center" mb={1.5}>
+        <Box display="flex" alignItems="center" mb={2}>
           <Rating
             value={tour.rating}
             precision={0.5}
             readOnly
-            size="small"
+            size="medium"
             emptyIcon={<StarIcon fontSize="inherit" color="disabled" />}
           />
           <Typography variant="body2" color="text.secondary" ml={1}>
-            ({Math.round(tour.rating * 10) / 10})
+            {tour.rating.toFixed(1)} ({Math.floor(tour.price/100)} reviews)
           </Typography>
         </Box>
 
-        <Typography variant="body2" color="text.secondary" mb={2}>
-          {tour.duration}
-        </Typography>
+        <Box display="flex" alignItems="center" mb={2}>
+          <AccessTimeIcon fontSize="small" sx={{ color: '#FF6600', mr: 0.5 }} />
+          <Typography variant="body2" color="#FF6600" fontWeight="medium">
+            {tour.duration}
+          </Typography>
+        </Box>
 
         <Box display="flex" gap={1} mb={3} flexWrap="wrap">
           {tour.tags?.map((tag, idx) => (
@@ -251,7 +303,7 @@ const TourCard = ({ tour }) => {
               size="small"
               variant="outlined"
               color="primary"
-              sx={{ borderRadius: 1 }}
+              sx={{ borderRadius: 1, fontWeight: 'medium' }}
             />
           ))}
         </Box>
@@ -259,18 +311,38 @@ const TourCard = ({ tour }) => {
         <Box display="flex" justifyContent="space-between" alignItems="flex-end">
           <Box>
             <Typography variant="caption" color="text.secondary">Starting from</Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary">
-              ₹{tour.price.toLocaleString()}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">per person</Typography>
+            <Box display="flex" alignItems="baseline">
+              <Typography variant="h4" fontWeight="bold" color="#FF6600" sx={{ mr: 1 }}>
+                ₹{tour.price.toLocaleString()}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">per person</Typography>
+            </Box>
+            {tour.price < 10000 && (
+              <Typography variant="caption" color="success.main" sx={{ display: 'flex', alignItems: 'center' }}>
+                <LocalOfferIcon fontSize="small" sx={{ mr: 0.5 }} /> Great Deal!
+              </Typography>
+            )}
           </Box>
           <Button
             variant="contained"
             size="medium"
-            sx={{ borderRadius: 2, px: 3 }}
+            sx={{ 
+              borderRadius: '8px', 
+              px: 4,
+              py: 1,
+              backgroundColor: '#FF6600', 
+              color: '#fff',
+              fontWeight: 'bold',
+              '&:hover': { 
+                backgroundColor: '#e65c00',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(255,102,0,0.3)'
+              },
+              transition: 'all 0.3s ease'
+            }}
             onClick={() => router.push(`/tour-details/${tour.slug}`)}
           >
-            View Details
+            Explore Now
           </Button>
         </Box>
       </Box>
@@ -294,6 +366,7 @@ const ToursPage = () => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
+        setLoading(true);
         const res = await fetch("https://craftedvacays.grandeurnet.in/get-tours.php");
         const data = await res.json();
 
@@ -317,6 +390,9 @@ const ToursPage = () => {
           type: item.type || "General",
         }));
 
+        // Sort by rating (highest first)
+        formatted.sort((a, b) => b.rating - a.rating);
+        
         setTours(formatted);
       } catch (err) {
         console.error("Failed to fetch tours", err);
@@ -330,21 +406,26 @@ const ToursPage = () => {
   }, []);
 
   const filteredTours = tours.filter((tour) => {
-    const matchesType = filters.type.length === 0 || filters.type.includes(tour.type);
+    const matchesType = filters.type.length === 0 || filters.type.some(type => tour.type.includes(type.split(' ')[0]));
     const matchesPrice = tour.price >= filters.price[0] && tour.price <= filters.price[1];
     const matchesRating = filters.rating.length === 0 || filters.rating.includes(Math.floor(tour.rating));
     return matchesType && matchesPrice && matchesRating;
   });
 
   return (
-    <Box sx={{ bgcolor: 'background.default', color: 'text.primary', minHeight: '100vh' }}>
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" fontWeight="bold" component="h1" gutterBottom>
-            Discover Amazing Tours
+    <Box sx={{ 
+      bgcolor: 'background.default', 
+      color: 'text.primary', 
+      minHeight: '100vh',
+      backgroundImage: 'linear-gradient(to bottom, #f9f9ff, #ffffff)'
+    }}>
+      <Container maxWidth="xl" sx={{ py: 6 }}>
+        <Box sx={{ mb: 6, textAlign: 'center' }}>
+          <Typography variant="h3" fontWeight="bold" component="h1" gutterBottom sx={{ color: '#333' }}>
+            Your Next Adventure Awaits
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Find your perfect adventure with our curated selection of tours
+          <Typography variant="h5" color="text.secondary" sx={{ maxWidth: '800px', mx: 'auto' }}>
+            Discover handpicked experiences that will create memories to last a lifetime
           </Typography>
         </Box>
 
@@ -352,8 +433,21 @@ const ToursPage = () => {
           variant="contained"
           startIcon={<FilterListIcon />}
           onClick={() => setMobileOpen(true)}
+          sx={{
+            backgroundColor: '#FF6600',
+            color: '#fff',
+            fontWeight: 'bold',
+            borderRadius: '8px',
+            py: 1,
+            '&:hover': { 
+              backgroundColor: '#e65c00',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 8px rgba(255,102,0,0.3)'
+            },
+            transition: 'all 0.3s ease'
+          }}
         >
-          Filters
+          Filter Tours
         </FilterButton>
 
         <Grid container spacing={4}>
@@ -370,36 +464,56 @@ const ToursPage = () => {
             {loading ? (
               [...Array(4)].map((_, index) => (
                 <StyledTourCard key={index} elevation={3}>
-                  <Skeleton variant="rectangular" width={300} height={200} />
+                  <Skeleton variant="rectangular" width={350} height={250} animation="wave" />
                   <Box sx={{ p: 3, flex: 1 }}>
-                    <Skeleton width="40%" />
-                    <Skeleton width="80%" height={40} />
-                    <Skeleton width="60%" />
+                    <Skeleton width="40%" height={24} animation="wave" />
+                    <Skeleton width="80%" height={40} animation="wave" sx={{ my: 1 }} />
+                    <Skeleton width="60%" height={24} animation="wave" />
                     <Box sx={{ my: 2 }}>
-                      <Skeleton width="100%" height={60} />
+                      <Skeleton width="100%" height={60} animation="wave" />
                     </Box>
                     <Box display="flex" justifyContent="space-between">
-                      <Skeleton width="30%" height={50} />
-                      <Skeleton width="30%" height={50} />
+                      <Skeleton width="30%" height={50} animation="wave" />
+                      <Skeleton width="30%" height={50} animation="wave" />
                     </Box>
                   </Box>
                 </StyledTourCard>
               ))
             ) : filteredTours.length > 0 ? (
-              filteredTours.map((tour) => <TourCard key={tour.id} tour={tour} />)
-            ) : (
-              <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  No tours found matching your criteria
+              <>
+                <Typography variant="h6" mb={3} color="text.secondary">
+                  {filteredTours.length} {filteredTours.length === 1 ? 'Tour' : 'Tours'} Found
                 </Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  Try adjusting your filters or search for something else
+                {filteredTours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
+              </>
+            ) : (
+              <Paper elevation={3} sx={{ p: 6, textAlign: 'center', borderRadius: 3 }}>
+                <Typography variant="h5" color="text.secondary" gutterBottom>
+                  No tours match your search
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 3, maxWidth: '600px', mx: 'auto' }}>
+                  We couldn't find any tours that match your filters. Try adjusting your criteria or browse our most popular options below.
                 </Typography>
                 <Button 
-                  variant="outlined" 
+                  variant="contained"
+                  size="large"
                   onClick={() => setFilters({ type: [], price: [2000, 50000], rating: [] })}
+                  sx={{
+                    backgroundColor: '#FF6600',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    borderRadius: '8px',
+                    px: 4,
+                    py: 1.5,
+                    '&:hover': { 
+                      backgroundColor: '#e65c00',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 12px rgba(255,102,0,0.3)'
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
                 >
-                  Reset Filters
+                  Show All Tours
                 </Button>
               </Paper>
             )}

@@ -12,6 +12,9 @@ const SearchAndPackages = () => {
     guests: '',
     rating: [],
     language: [],
+    minPrice: '',
+  maxPrice: '',
+
   });
 
   const handleFilterChange = (newFilter) => {

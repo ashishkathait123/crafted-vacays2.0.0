@@ -2,31 +2,40 @@
 
 import { createContext, useContext, useState } from "react";
 
-// Exchange rates
+// ✅ Updated exchange rates (as of June 2025; adjust regularly or use API)
 const exchangeRates = {
-  INR: { rate: 1, symbol: "₹" },
-  USD: { rate: 0.012, symbol: "$" },
-  EUR: { rate: 0.011, symbol: "€" },
-  GBP: { rate: 0.009, symbol: "£" },
+  INR: { rate: 1, symbol: "₹" },             // Base currency
+  USD: { rate: 1 / 83.1, symbol: "$" },      // 1 INR ≈ 0.01203 USD
+  EUR: { rate: 1 / 89.2, symbol: "€" },      // 1 INR ≈ 0.0112 EUR
+  GBP: { rate: 1 / 104.5, symbol: "£" },     // 1 INR ≈ 0.0095 GBP
 };
 
-// Create context
 const CurrencyContext = createContext(undefined);
 
-// Provider
 export const CurrencyProvider = ({ children }) => {
   const [currency, setCurrency] = useState("INR");
 
-  const convertPrice = (amount) => {
+  const convertPrice = (amount, fromCurrency = "INR") => {
     if (!amount) return 0;
 
-    const numericAmount = parseFloat(amount.toString().replace(/[^0-9.]/g, ""));
-    if (isNaN(numericAmount)) {
+    const cleanAmount = parseFloat(amount.toString().replace(/[^0-9.]/g, ""));
+    if (isNaN(cleanAmount)) {
       console.error("Invalid amount passed to convertPrice:", amount);
       return 0;
     }
 
-    return numericAmount * (exchangeRates[currency]?.rate || 1);
+    const fromRate = exchangeRates[fromCurrency]?.rate || 1;
+    const toRate = exchangeRates[currency]?.rate || 1;
+
+    const convertedAmount = (cleanAmount / fromRate) * toRate;
+
+    return parseFloat(convertedAmount.toFixed(2));
+  };
+
+  const formatCurrency = (amount) => {
+    const converted = convertPrice(amount);
+    const symbol = exchangeRates[currency]?.symbol || "₹";
+    return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   return (
@@ -35,6 +44,7 @@ export const CurrencyProvider = ({ children }) => {
         currency,
         setCurrency,
         convertPrice,
+        formatCurrency,
         currencySymbol: exchangeRates[currency]?.symbol || "₹",
       }}
     >
@@ -43,10 +53,9 @@ export const CurrencyProvider = ({ children }) => {
   );
 };
 
-// Hook
 export const useCurrency = () => {
   const context = useContext(CurrencyContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useCurrency must be used within a CurrencyProvider");
   }
   return context;

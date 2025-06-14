@@ -11,7 +11,6 @@ import {
   Button,
 } from "@mui/material";
 import HotelIcon from "@mui/icons-material/Hotel";
-// import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import { useCurrency } from "@/context/CurrencyContext";
 import { FaLocationDot, FaUser, FaClock, FaTag } from "react-icons/fa6";
 
