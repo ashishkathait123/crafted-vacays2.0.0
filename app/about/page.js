@@ -13,7 +13,6 @@ export default function AboutUs() {
     setStartCount(true);
   }, []);
 
-  // High-quality travel images - ensure these are stunning destination shots
   const images = [
     { src: '/images/about/beach.png', alt: 'Couple enjoying sunset at Santorini' },
     { src: '/images/about/mountain.png', alt: 'Bungalow over crystal-clear Maldives waters' },
@@ -22,10 +21,8 @@ export default function AboutUs() {
 
   return (
     <main className="bg-gradient-to-b from-white via-blue-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 transition-colors duration-300 min-h-screen">
-      {/* Hero About Section */}
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="flex flex-col lg:flex-row items-center gap-12">
-          {/* Visual Storytelling - Left Side */}
           <motion.div
             className="lg:w-1/2 w-full flex justify-center lg:justify-end relative"
             initial={{ opacity: 0, x: -50 }}
@@ -34,7 +31,6 @@ export default function AboutUs() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <div className="grid grid-cols-2 gap-6 relative max-w-lg">
-              {/* Main Image - Hero Shot */}
               <motion.div
                 className="relative h-64 w-full rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all"
                 whileHover={{ scale: 1.03, zIndex: 10 }}
@@ -55,7 +51,6 @@ export default function AboutUs() {
                 </div>
               </motion.div>
 
-              {/* Secondary Image */}
               <motion.div
                 className="relative h-80 w-full rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all"
                 whileHover={{ scale: 1.03, zIndex: 10 }}
@@ -76,7 +71,6 @@ export default function AboutUs() {
                 </div>
               </motion.div>
 
-              {/* Floating Badge Image */}
               <motion.div
                 className="relative h-56 w-full rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all lg:absolute lg:-bottom-8 lg:-right-8 hidden lg:block"
                 whileHover={{ scale: 1.05, zIndex: 10 }}
@@ -96,8 +90,7 @@ export default function AboutUs() {
                 </div>
               </motion.div>
 
-              {/* Decorative Elements */}
-              <motion.div 
+              <motion.div
                 className="absolute -top-6 -left-6 hidden lg:block"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
@@ -110,7 +103,6 @@ export default function AboutUs() {
             </div>
           </motion.div>
 
-          {/* Right Content - Compelling Copy */}
           <motion.div
             className="lg:w-1/2 w-full text-center lg:text-left"
             initial={{ opacity: 0, x: 50 }}
@@ -118,7 +110,7 @@ export default function AboutUs() {
             transition={{ duration: 0.8, type: 'spring' }}
             viewport={{ once: true, margin: "-100px" }}
           >
-            <motion.h2 
+            <motion.h2
               className="text-5xl font-bold mb-6 text-gray-900 dark:text-white"
               initial={{ y: -20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
@@ -126,25 +118,24 @@ export default function AboutUs() {
             >
               <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">Crafting Unforgettable</span><br />Travel Experiences
             </motion.h2>
-            
-            <motion.p 
+
+            <motion.p
               className="text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto lg:mx-0 leading-relaxed mb-8"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              At <strong>TravelCraft</strong>, we don't just plan trips - we design <span className="text-orange-500 font-medium">life-changing adventures</span>. Our expert team handpicks every destination, activity, and accommodation to create <span className="underline decoration-orange-400">Instagram-worthy moments</span> you'll cherish forever.
+              At <strong>TravelCraft</strong>, we don&apos;t just plan trips - we design <span className="text-orange-500 font-medium">life-changing adventures</span>. Our expert team handpicks every destination, activity, and accommodation to create <span className="underline decoration-orange-400">Instagram-worthy moments</span> you&apos;ll cherish forever.
             </motion.p>
 
-            {/* Social Proof Section */}
-            <motion.div 
+            <motion.div
               className="mb-10"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
               <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
-                {[1,2,3,4,5].map((star) => (
+                {[1, 2, 3, 4, 5].map((star) => (
                   <svg key={star} className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
@@ -152,12 +143,11 @@ export default function AboutUs() {
                 <span className="text-gray-600 dark:text-gray-300 font-medium">4.9/5 from 2.4k+ travelers</span>
               </div>
               <p className="text-gray-500 dark:text-gray-400 italic">
-                "TravelCraft planned our honeymoon and it was absolute perfection! Every detail was curated for the ultimate experience." - @WanderlustCouple
+                &quot;TravelCraft planned our honeymoon and it was absolute perfection! Every detail was curated for the ultimate experience.&quot; - @WanderlustCouple
               </p>
             </motion.div>
 
-            {/* Impact Stats Section */}
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -183,8 +173,7 @@ export default function AboutUs() {
               ))}
             </motion.div>
 
-            {/* CTA Experience Highlight */}
-            <motion.div 
+            <motion.div
               className="inline-block w-full"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -209,7 +198,7 @@ export default function AboutUs() {
           </motion.div>
         </div>
       </section>
-      
+
       <VideoSection />
     </main>
   );
