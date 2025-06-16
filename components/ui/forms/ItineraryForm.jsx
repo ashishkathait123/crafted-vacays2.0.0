@@ -54,9 +54,9 @@ export default function ItineraryForm({ onClose }) {
        "service_79m1aj6",
         "template_zl07dn8",
         {
-          to_name: "TravelCraft Team",
+          to_name: "Crafted Vacays Team",
           from_name: persons,
-          email: "inquiry@travelcraft.com",
+          email: "inquiry@Crafted Vacays.com",
           destination,
           travel_month: travelMonth,
           duration,

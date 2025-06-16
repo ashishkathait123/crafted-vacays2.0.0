@@ -153,7 +153,7 @@ const TourDetailsPage = () => {
     : Array(4).fill('/images/default-tour.jpg');
 
   return (
-    <div className="relative overflow-x-hidden py-8 bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 min-h-screen">
+    <div className="relative overflow-x-hidden py-8 bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 min-h-screen mt-24">
       <Box sx={{ maxWidth: "1440px", mx: "auto", px: { xs: 2, md: 4 }, mb: 6 }}>
         {/* Hero Section */}
         <Box sx={{ 
@@ -453,30 +453,37 @@ const TourDetailsPage = () => {
               </Typography>
               
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <Box sx={{ 
-                    p: 3, 
-                    borderRadius: 2,
-                    bgcolor: 'background.paper',
-                    height: '100%'
-                  }}>
-                    <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-                      Select Your Dates
-                    </Typography>
-                    <Calendar
-                      tileClassName={({ date, view }) =>
-                        view === "month" && isDateAvailable(date) ? "available-date" : ""
-                      }
-                      tileContent={({ date, view }) =>
-                        view === "month" && isDateAvailable(date) ? (
-                          <div style={{ marginTop: 2, color: "green", fontSize: 12 }}>Available</div>
-                        ) : null
-                      }
-                    />
-                    <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
-                      * Popular dates sell out fast! Book early to secure your spot.
-                    </Typography>
-                  </Box>
+                <Grid item xs={10} md={6}>
+                 <Box
+      sx={{
+        p: 3,
+        borderRadius: 2,
+        bgcolor: 'background.paper',
+        color: 'text.primary',
+        height: '100%',
+        boxShadow: 2,
+      }}
+    >
+      <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
+        Select Your Dates
+      </Typography>
+
+      <Calendar
+        className={theme.palette.mode === 'dark' ? 'calendar-dark' : 'calendar-light'}
+        tileClassName={({ date, view }) =>
+          view === "month" && isDateAvailable(date) ? "available-date" : ""
+        }
+        tileContent={({ date, view }) =>
+          view === "month" && isDateAvailable(date) ? (
+            <div style={{ marginTop: 2, color: "green", fontSize: 12 }}>Available</div>
+          ) : null
+        }
+      />
+
+      <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
+        * Popular dates sell out fast! Book early to secure your spot.
+      </Typography>
+    </Box>
                 </Grid>
 
                 <Grid item xs={12} md={6}>

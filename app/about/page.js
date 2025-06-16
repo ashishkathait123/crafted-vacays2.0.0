@@ -125,7 +125,7 @@ export default function AboutUs() {
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              At <strong>TravelCraft</strong>, we don&apos;t just plan trips - we design <span className="text-orange-500 font-medium">life-changing adventures</span>. Our expert team handpicks every destination, activity, and accommodation to create <span className="underline decoration-orange-400">Instagram-worthy moments</span> you&apos;ll cherish forever.
+              At <strong>Crafted Vacays</strong>, we don&apos;t just plan trips - we design <span className="text-orange-500 font-medium">life-changing adventures</span>. Our expert team handpicks every destination, activity, and accommodation to create <span className="underline decoration-orange-400">Instagram-worthy moments</span> you&apos;ll cherish forever.
             </motion.p>
 
             <motion.div
@@ -143,7 +143,7 @@ export default function AboutUs() {
                 <span className="text-gray-600 dark:text-gray-300 font-medium">4.9/5 from 2.4k+ travelers</span>
               </div>
               <p className="text-gray-500 dark:text-gray-400 italic">
-                &quot;TravelCraft planned our honeymoon and it was absolute perfection! Every detail was curated for the ultimate experience.&quot; - @WanderlustCouple
+                &quot;Crafted Vacays planned our honeymoon and it was absolute perfection! Every detail was curated for the ultimate experience.&quot; - @WanderlustCouple
               </p>
             </motion.div>
 

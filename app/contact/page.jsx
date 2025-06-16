@@ -112,8 +112,8 @@ export default function ContactUs() {
                 {
                   icon: '✉️',
                   title: 'Email',
-                  content: 'info@travelcraft.com',
-                  link: 'mailto:info@travelcraft.com',
+                  content: 'info@Crafted Vacays.com',
+                  link: 'mailto:info@Crafted Vacays.com',
                 },
                 {
                   icon: '📍',
@@ -177,7 +177,7 @@ export default function ContactUs() {
                   />
                   <Marker position={[28.6139, 77.209]}>
                     <Popup>
-                      TravelCraft Headquarters <br /> New Delhi, India
+                      Crafted Vacays Headquarters <br /> New Delhi, India
                     </Popup>
                   </Marker>
                 </MapContainer>

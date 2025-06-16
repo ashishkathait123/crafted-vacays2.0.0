@@ -15,7 +15,7 @@ import 'slick-carousel/slick/slick-theme.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata = {
-  title: "TravelCraft | Explore the World",
+  title: "Crafted Vacays | Explore the World",
   description: "Discover handcrafted travel experiences with our premium tour packages",
   keywords: "travel, tours, vacation, destinations",
 };
