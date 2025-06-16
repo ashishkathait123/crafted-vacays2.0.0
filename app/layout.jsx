@@ -1,15 +1,14 @@
 // app/layout.jsx
+
 import { Inter } from 'next/font/google';
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { DestinationProvider } from '@/context/DestinationContext';
 import { ThemeProvider } from '@/context/ThemeContext';
-import Header from "@/components/common/Header/Header";
-import Navbar from '@/components/common/Navbar/ResponsiveNav';
 import Footer from "@/components/common/Footer/Footer";
-import VideoBackground from '@/components/common/VideoBackground';
 import ScrollToTop from '@/components/common/ScrollToTop';
 import CursorEffect from '@/components/common/CursorEffect';
-import "./globals.css";
+import ClientWrapper from '@/components/common/ClientWrapper';
+import './globals.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -28,22 +27,9 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <DestinationProvider>
             <CurrencyProvider>
-            <CursorEffect />
-
-              <Header />
-
-              {/* ✅ Hero Video Background with Navbar Overlay */}
-              <div className="relative w-full h-screen overflow-hidden">
-                <VideoBackground />
-                <div className="absolute top-0 left-0 w-full z-20">
-                  <Navbar />
-                </div>
-              </div>
-
-              <main className="min-h-screen dark:bg-gray-950 bg-white transition-colors duration-300">
-                {children}
-              </main>
-<ScrollToTop/>
+              <CursorEffect />
+              <ClientWrapper>{children}</ClientWrapper>
+              <ScrollToTop />
               <Footer />
             </CurrencyProvider>
           </DestinationProvider>

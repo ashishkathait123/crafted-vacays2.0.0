@@ -112,7 +112,7 @@ const DestinationDetails = ({ parentName }) => {
 
         <motion.div
           variants={fadeInUp}
-          className="py-12 px-4 md:px-16 text-center relative z-10"
+          className="py-12 px-4 md:px-16 text-center relative z-10 mt-10"
         >
           <motion.h1
             className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500"
@@ -215,14 +215,24 @@ const DestinationDetails = ({ parentName }) => {
         Contact Our Travel Experts
       </button>
 
-     {showForm && (
-  <div className="fixed inset-0 z-[99990] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto mt-12">
-    <div className="relative w-full max-w-lg mx-auto my-auto">
+
+
+
+
+
+
+      </motion.div>
+    {showForm && (
+  <div className="fixed inset-0 z-[999999] flex items-center justify-center">
+    <div
+      className="w-full max-w-3xl max-h-[95vh] overflow-y-scroll scrollbar-hide p-4"
+    >
       <ItineraryForm onClose={() => setShowForm(false)} />
     </div>
   </div>
 )}
-      </motion.div>
+
+
     </motion.div>
   );
 };

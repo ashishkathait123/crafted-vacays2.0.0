@@ -17,31 +17,29 @@ const Header = () => {
   const { currency, setCurrency } = useCurrency();
   const currencies = ['USD', 'EUR', 'GBP', 'INR'];
   const [showOptions, setShowOptions] = useState(false);
-  const [hideHeader, setHideHeader] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  // const [hideHeader, setHideHeader] = useState(false);
+  // const [lastScrollY, setLastScrollY] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const currentScrollY = window.scrollY;
 
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setHideHeader(true);
-      } else {
-        setHideHeader(false);
-      }
+  //     if (currentScrollY > lastScrollY && currentScrollY > 100) {
+  //       setHideHeader(true);
+  //     } else {
+  //       setHideHeader(false);
+  //     }
 
-      setLastScrollY(currentScrollY);
-    };
+  //     setLastScrollY(currentScrollY);
+  //   };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, [lastScrollY]);
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-[9999] bg-black text-white transition-transform duration-300 ${
-        hideHeader ? '-translate-y-full' : 'translate-y-0'
-      }`}
+      className={`fixed top-0 left-0 w-full z-[9999] bg-black text-white transition-transform duration-300`}
     >
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center space-y-3 lg:space-y-0 px-4 py-2">
         {/* Contact Info */}

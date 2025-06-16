@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { FaShoppingBag, FaChevronDown } from 'react-icons/fa';
+import { FaChevronDown } from 'react-icons/fa';
 import { Moon, Sun } from 'lucide-react';
 import ItineraryForm from '@/components/ui/forms/ItineraryForm';
 import { useTheme } from '@/context/ThemeContext';
@@ -12,20 +12,26 @@ import { useDestination } from '@/context/DestinationContext';
 const DesktopNav = () => {
   const [dropdown, setDropdown] = useState(null); 
   const [isSticky, setIsSticky] = useState(false);
-  const { destinationName } = useDestination();
+  const { destinationName, setDestinationName } = useDestination();
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
+
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
       setIsSticky(window.scrollY > window.innerHeight * 0.2);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  // Detect tour detail page like /india/goa/beach-bliss-package
-const isTourDetailsPage = /^\/tour-details\/[a-z0-9-]+$/i.test(pathname);
+    // ✅ Reset destinationName only if on home and it has a value
+    if (pathname === '/' && destinationName) {
+      setDestinationName('');
+      localStorage.removeItem('destinationName'); // Optional: if you're using localStorage
+    }
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname, destinationName, setDestinationName]);
 
   const menus = [
     { label: 'Home', links: ['Home'] },
@@ -33,38 +39,32 @@ const isTourDetailsPage = /^\/tour-details\/[a-z0-9-]+$/i.test(pathname);
       label: 'Destination',
       links: ['Destination', 'India', 'US', 'Neighbouring Countries'],
     },
-    { label: 'Pages', links: ['About','Tours'] },
+    { label: 'Pages', links: ['About', 'Tours'] },
   ];
 
   const getPath = (link) => {
     switch (link) {
-      case 'Home':
-        return '/';
-      case 'Destination':
-        return '/destinations';
-      case 'India':
-        return '/destinations/india';
-      case 'Abroad':
-        return '/destinations/US';
-      case 'Neighbouring Countries':
-        return '/destinations/neighbouring-countries';
-      case 'About':
-        return '/about';
-      case 'Tours':
-        return '/tours';
-      default:
-        return '#';
+      case 'Home': return '/';
+      case 'Destination': return '/destinations';
+      case 'India': return '/destinations/india';
+      case 'US': return '/destinations/US';
+      case 'Destination': return '/destinations/japan'; // Example for Japan, can be dynamic
+      case 'Destination': return '/destinations/italy'; // Example for Italy, can be dynamic  
+      case 'Neighbouring Countries': return '/destinations/neighbouring-countries';
+      case 'About': return '/about';
+      case 'Tours': return '/tours';
+      default: return '#';
     }
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      {/* Header Bar */}
+    <div className="relative w-full overflow-hidden mb-10">
+      {/* Header */}
       <header
-    className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-      isSticky ? 'py-2 bg-white dark:bg-gray-900 shadow-md' : 'py-4 bg-transparent'
-    }`}
-  >
+        className={`fixed top-10 left-0 w-full z-[9998] transition-all duration-300 ${
+          isSticky ? 'py-2 bg-white dark:bg-gray-900 shadow-md' : 'py-4 bg-transparent'
+        }`}
+      >
         <div className="container mx-auto flex items-center justify-between px-6">
           <Link href="/">
             <Image
@@ -76,7 +76,7 @@ const isTourDetailsPage = /^\/tour-details\/[a-z0-9-]+$/i.test(pathname);
             />
           </Link>
 
-          {/* Nav Links */}
+          {/* Navigation Links */}
           <nav className="hidden xl:flex space-x-6 z-50">
             {menus.map((menu, idx) => (
               <div
@@ -121,11 +121,8 @@ const isTourDetailsPage = /^\/tour-details\/[a-z0-9-]+$/i.test(pathname);
             </Link>
           </nav>
 
-          {/* Cart & Theme Toggle */}
+          {/* Contact & Theme Toggle */}
           <div className="flex items-center space-x-4">
-            {/* <Link href="/cart" className="text-gray-900 dark:text-white text-xl">
-              <FaShoppingBag />
-            </Link> */}
             <Link
               href="/contact"
               className="bg-orange-500 text-white px-4 py-2 rounded-md font-medium"
@@ -147,19 +144,13 @@ const isTourDetailsPage = /^\/tour-details\/[a-z0-9-]+$/i.test(pathname);
         </div>
       </header>
 
-      {/* ✅ Only show Itinerary + Hero if NOT on tour details page */}
-      {!isTourDetailsPage && (
-        <>
-          <section className="relative h-screen overflow-auto bg-cover bg-center">
-            <div className="absolute bottom-10 top-1/2 right-6 z-10 w-[400px] max-w-[90%]">
-              <ItineraryForm />
-            </div>
-          </section>
-
-          
-        </>
-      )}
-      <div className="intro absolute left-10 bottom-10 z-10 max-w-[600px] text-white">
+      {/* ✅ Hero Section only on Home Page */}
+      {isHomePage && (
+        <section className="relative h-screen overflow-auto bg-cover bg-center">
+          <div className="absolute bottom-10 top-1/2 right-6 z-10 w-[400px] max-w-[90%]">
+            <ItineraryForm />
+          </div>
+          <div className="intro absolute left-10 bottom-10 z-10 max-w-[600px] text-white">
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
               {destinationName ? `Explore ${destinationName}` : 'Welcome to Crafted Vacays'}
             </h1>
@@ -168,6 +159,8 @@ const isTourDetailsPage = /^\/tour-details\/[a-z0-9-]+$/i.test(pathname);
               {destinationName ? destinationName : 'crafted'} tour packages. Tailored for perfection!
             </p>
           </div>
+        </section>
+      )}
     </div>
   );
 };
