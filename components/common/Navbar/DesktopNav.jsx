@@ -34,7 +34,7 @@ const DesktopNav = () => {
   }, [pathname, destinationName, setDestinationName]);
 
   const menus = [
-    { label: 'Home', links: ['Home'] },
+    
     {
       label: 'Destination',
       links: ['Destination', 'India', 'US', 'Neighbouring Countries'],
@@ -44,7 +44,6 @@ const DesktopNav = () => {
 
   const getPath = (link) => {
     switch (link) {
-      case 'Home': return '/';
       case 'Destination': return '/destinations';
       case 'India': return '/destinations/india';
       case 'US': return '/destinations/US';
@@ -78,6 +77,12 @@ const DesktopNav = () => {
 
           {/* Navigation Links */}
           <nav className="hidden xl:flex space-x-6 z-50">
+            <Link
+              href="/"
+              className="text-gray-900 dark:text-white font-medium px-4 py-1 hover:bg-orange-500 hover:text-white transition duration-300 rounded-md"
+            >
+              Home
+            </Link>
             {menus.map((menu, idx) => (
               <div
                 key={idx}
@@ -115,7 +120,7 @@ const DesktopNav = () => {
             ))}
             <Link
               href="/contact"
-              className="text-gray-900 dark:text-white font-medium px-4 py-2 hover:bg-orange-500 hover:text-white transition duration-300 rounded-md"
+              className="text-gray-900 dark:text-white font-medium px-4 py-1 hover:bg-orange-500 hover:text-white transition duration-300 rounded-md"
             >
               Contact
             </Link>

@@ -10,7 +10,6 @@ import { useDestination } from "@/context/DestinationContext";
 import { useTheme } from "@/context/ThemeContext";
 
 const menus = [
-  { label: "Home", links: ["Home"] },
   {
     label: "Destination",
     links: ["Destination", "India", "US", "Neighbouring Countries"],
@@ -20,7 +19,7 @@ const menus = [
 
 const getPath = (link) => {
   switch (link) {
-    case "Home": return "/";
+   
     case "Destination": return "/destinations";
     case "India": return "/destinations/india";
     case "US": return "/destinations/US";
@@ -105,6 +104,13 @@ const MobileNav = ({ isMenuOpen, setIsMenuOpen }) => {
         }`}
       >
         <nav className="flex flex-col gap-4 mt-20">
+          <Link
+            href="/"
+            onClick={() => setIsMenuOpen(false)}
+            className="text-lg font-medium text-black dark:text-white"
+          >
+            Home
+          </Link>
           {menus.map((menu, idx) => (
             <div key={idx}>
               <button
@@ -167,7 +173,7 @@ const MobileNav = ({ isMenuOpen, setIsMenuOpen }) => {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[99990] top-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <ItineraryForm onClose={() => setShowForm(false)} />
         </div>
       )}
