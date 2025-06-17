@@ -14,7 +14,7 @@ import "swiper/css/scrollbar";
 
 const TourPackage = ({ filters }) => {
   const [packages, setPackages] = useState([]);
-  const { convertPrice, currencySymbol } = useCurrency();
+  const { currencySymbol } = useCurrency();
   const router = useRouter();
 
   useEffect(() => {
@@ -28,55 +28,43 @@ const TourPackage = ({ filters }) => {
   }, []);
 
   const filtered = packages.filter((pkg) => {
-    const ratingMatch =
-      !filters.rating?.length || filters.rating.includes(pkg.rating);
+    const ratingMatch = !filters.rating?.length || filters.rating.includes(pkg.rating);
+    const languageMatch = !filters.language?.length || filters.language.includes(pkg.language);
+    const durationDaysMatch = !filters.duration_days ||
+  pkg.duration_days?.toString() === filters.duration_days;
 
-    const languageMatch =
-      !filters.language?.length || filters.language.includes(pkg.language);
-
-    const durationMatch =
-      !filters.duration ||
-      `${pkg.duration_nights}N/${pkg.duration_days}D`
-        .toLowerCase()
-        .includes(filters.duration.toLowerCase());
-
-    const locationMatch =
-      !filters.location ||
-      pkg.city_name?.toLowerCase().includes(filters.location.toLowerCase());
-
-    const tourTypeMatch =
-      !filters.tourType ||
+const durationNightsMatch = !filters.duration_nights ||
+  pkg.duration_nights?.toString() === filters.duration_nights;
+    // const locationMatch = !filters.location ||
+    //   pkg.city_name?.toLowerCase().includes(filters.location.toLowerCase());
+    const country_nameMatch = !filters.country_name ||
+      pkg.country_name?.toLowerCase().includes(filters.country_name.toLowerCase());
+    const tourTypeMatch = !filters.tourType ||
       pkg.tourType?.toLowerCase().includes(filters.tourType.toLowerCase());
-
-    const guestMatch =
-      !filters.guests || parseInt(filters.guests) === 2; // Replace with real logic
+    const guestMatch = !filters.guests || parseInt(filters.guests) === 2;
 
     const numericPrice = parseFloat(pkg.price?.toString().replace(/[^\d.]/g, '')) || 0;
-    const minPriceMatch =
-      !filters.minPrice || numericPrice >= parseFloat(filters.minPrice);
-    const maxPriceMatch =
-      !filters.maxPrice || numericPrice <= parseFloat(filters.maxPrice);
+    const minPriceMatch = !filters.minPrice || numericPrice >= parseFloat(filters.minPrice);
+    const maxPriceMatch = !filters.maxPrice || numericPrice <= parseFloat(filters.maxPrice);
 
-    return (
-      ratingMatch &&
-      languageMatch &&
-      durationMatch &&
-      locationMatch &&
-      tourTypeMatch &&
-      guestMatch &&
-      minPriceMatch &&
-      maxPriceMatch
-    );
+    return  ratingMatch &&
+  languageMatch &&
+  country_nameMatch &&
+  tourTypeMatch &&
+  guestMatch &&
+  minPriceMatch &&
+  maxPriceMatch &&
+  durationDaysMatch &&
+  durationNightsMatch;
   });
 
-  // ✅ Show SweetAlert if no tours match
   useEffect(() => {
     if (packages.length > 0 && filtered.length === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'No Tours Found',
         text: 'Try adjusting your search filters.',
-        confirmButtonColor: '#f97316', // Tailwind orange-500
+        confirmButtonColor: '#f97316',
       });
     }
   }, [filtered, packages]);
@@ -101,31 +89,31 @@ const TourPackage = ({ filters }) => {
             autoplay={{ delay: 3000 }}
             scrollbar={{ draggable: true }}
           >
-            {filtered.map((pkg) => (
-              <SwiperSlide key={pkg.id}>
-                <TourPackageCard
-                  packageData={{
-                    title: pkg.title,
-                    location: `${pkg.city_name}, ${pkg.state_name}`,
-                    tourType: pkg.tourType || "Explore",
-                    duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
-                    itinerary: pkg.itinerary?.slice(0, 50) + "...",
-                    rating: 4,
-                    guests: 2,
-                    originalPrice: `${currencySymbol}${convertPrice(
-                      parseFloat(pkg.price) * 1.2
-                    ).toFixed(2)}`,
-                    discountedPrice: `${currencySymbol}${convertPrice(
-                      parseFloat(pkg.price)
-                    ).toFixed(2)}`,
-                    images: pkg.images?.length
-                      ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
-                      : ["/images/bg/default.jpg"]
-                  }}
-                  onClick={() => router.push(`/tour-details/${pkg.slug}`)}
-                />
-              </SwiperSlide>
-            ))}
+            {filtered.map((pkg) => {
+              const priceINR = parseFloat(pkg.price) || 0;
+              return (
+                <SwiperSlide key={pkg.id}>
+                  <TourPackageCard
+                    packageData={{
+                      title: pkg.title,
+                      location: `${pkg.city_name}, ${pkg.state_name}`,
+                      country_name: ` ${pkg.country_name}`,
+                      tourType: pkg.tourType || "Explore",
+                      duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
+                      itinerary: pkg.itinerary?.slice(0, 50) + "...",
+                      rating: 4,
+                      guests: 2,
+                      originalPrice: priceINR * 1.2,
+                      discountedPrice: priceINR,
+                      images: pkg.images?.length
+                        ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
+                        : ["/images/bg/default.jpg"]
+                    }}
+                    onClick={() => router.push(`/tour-details/${pkg.slug}`)}
+                  />
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         )}
       </div>

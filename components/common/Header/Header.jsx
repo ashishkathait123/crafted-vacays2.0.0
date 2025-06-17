@@ -50,7 +50,7 @@ const Header = () => {
           </div>
           <div className="flex items-center space-x-2">
             <FaEnvelope className="text-orange-500" />
-            <span>touresinfo@gmail.com</span>
+            <span>craftedvacaysinfo@gmail.com</span>
           </div>
           <div className="flex items-center space-x-2">
             <FaMapMarkerAlt className="text-orange-500" />

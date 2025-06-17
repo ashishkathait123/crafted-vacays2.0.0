@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Star, MapPin, Calendar, Users, ArrowRight, X } from 'lucide-react';
-import DescriptionBox from '../ui/blocks/DescriptionBox';
-import EnquiryBlock from '../ui/blocks/EnquiryBlock';
-import TourPackageCard from '../ui/cards/TourCard';
-import StateTourPackageSlider from '../ui/sliders/StateTourPackageSlider';
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Star, MapPin, Calendar, Users, ArrowRight, X } from "lucide-react";
+import DescriptionBox from "../ui/blocks/DescriptionBox";
+import EnquiryBlock from "../ui/blocks/EnquiryBlock";
+import TourPackageCard from "../ui/cards/TourCard";
+import StateTourPackageSlider from "../ui/sliders/StateTourPackageSlider";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
 };
 
 const FirstView = () => {
@@ -22,7 +22,7 @@ const FirstView = () => {
   const [stateData, setStateData] = useState(null);
   const [relatedTours, setRelatedTours] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('highlights');
+  const [activeTab, setActiveTab] = useState("highlights");
   const [selectedCity, setSelectedCity] = useState(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const FirstView = () => {
       return;
     }
 
-    fetch('https://craftedvacays.grandeurnet.in/get-tours.php')
+    fetch("https://craftedvacays.grandeurnet.in/get-tours.php")
       .then((res) => res.json())
       .then((data) => {
         const destination = data.destinations.find(
@@ -39,7 +39,7 @@ const FirstView = () => {
         );
 
         if (!destination) {
-          console.warn('Country not found:', countrySlug);
+          console.warn("Country not found:", countrySlug);
           setLoading(false);
           return;
         }
@@ -50,17 +50,17 @@ const FirstView = () => {
         );
 
         if (matchedState) {
-          ('Matched as state:', matchedState.name);
+          "Matched as state:", matchedState.name;
           setStateData({
             ...matchedState,
-            type: 'state',
+            type: "state",
             highlights: matchedState.highlights || [
-              'Top natural beauty spots',
-              'Rich culture and heritage',
-              'Adventure and nature experiences',
+              "Top natural beauty spots",
+              "Rich culture and heritage",
+              "Adventure and nature experiences",
             ],
-            bestTimeToVisit: matchedState.bestTimeToVisit || 'October to March',
-            idealDuration: matchedState.idealDuration || '5-7 days',
+            bestTimeToVisit: matchedState.bestTimeToVisit || "October to March",
+            idealDuration: matchedState.idealDuration || "5-7 days",
           });
           setRelatedTours(matchedState.tours || []);
           setLoading(false);
@@ -83,25 +83,36 @@ const FirstView = () => {
         }
 
         if (matchedCity && matchedParentState) {
-          ('Matched as city:', matchedCity.name, 'in state:', matchedParentState.name);
+          "Matched as city:",
+            matchedCity.name,
+            "in state:",
+            matchedParentState.name;
           setStateData({
             ...matchedCity,
-            type: 'city',
-            short_description: matchedCity.short_description || matchedCity.description || '',
-            highlights: matchedCity.highlights || matchedParentState.highlights || [],
-            bestTimeToVisit: matchedCity.bestTimeToVisit || matchedParentState.bestTimeToVisit || 'Anytime',
-            idealDuration: matchedCity.idealDuration || matchedParentState.idealDuration || '2-4 days',
+            type: "city",
+            short_description:
+              matchedCity.short_description || matchedCity.description || "",
+            highlights:
+              matchedCity.highlights || matchedParentState.highlights || [],
+            bestTimeToVisit:
+              matchedCity.bestTimeToVisit ||
+              matchedParentState.bestTimeToVisit ||
+              "Anytime",
+            idealDuration:
+              matchedCity.idealDuration ||
+              matchedParentState.idealDuration ||
+              "2-4 days",
             parentState: matchedParentState.name,
           });
           setRelatedTours(matchedCity.tours || []);
         } else {
-          console.warn('No state or city matched for slug:', stateSlug);
+          console.warn("No state or city matched for slug:", stateSlug);
         }
 
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Failed to fetch destination data:', err);
+        console.error("Failed to fetch destination data:", err);
         setLoading(false);
       });
   }, [countrySlug, stateSlug]);
@@ -110,7 +121,9 @@ const FirstView = () => {
     setSelectedCity(city);
     // Smooth scroll to city details section
     setTimeout(() => {
-      document.getElementById('city-details-section')?.scrollIntoView({ behavior: 'smooth' });
+      document
+        .getElementById("city-details-section")
+        ?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
 
@@ -123,7 +136,9 @@ const FirstView = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-xl font-semibold text-gray-600">Discovering {stateSlug} for you...</p>
+          <p className="mt-4 text-xl font-semibold text-gray-600">
+            Discovering {stateSlug} for you...
+          </p>
         </div>
       </div>
     );
@@ -133,8 +148,13 @@ const FirstView = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center py-20 px-6 bg-white rounded-xl shadow-lg max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-red-500 mb-4">Destination Not Found</h2>
-          <p className="text-gray-600 mb-6">We couldn't find information for {stateSlug}. Please check the URL or explore our other destinations.</p>
+          <h2 className="text-2xl font-bold text-red-500 mb-4">
+            Destination Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            We couldn't find information for {stateSlug}. Please check the URL
+            or explore our other destinations.
+          </p>
           <button className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-6 rounded-full transition-all">
             Explore Destinations
           </button>
@@ -172,11 +192,15 @@ const FirstView = () => {
             <div className="flex flex-wrap justify-center gap-4">
               <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-white" />
-                <span className="text-white font-medium">{stateData.cities?.length || 5}+ Destinations</span>
+                <span className="text-white font-medium">
+                  {stateData.cities?.length || 5}+ Destinations
+                </span>
               </div>
               <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2">
                 <Star className="w-5 h-5 text-yellow-400" />
-                <span className="text-white font-medium">4.8/5 Traveler Rating</span>
+                <span className="text-white font-medium">
+                  4.8/5 Traveler Rating
+                </span>
               </div>
             </div>
           </motion.div>
@@ -184,7 +208,7 @@ const FirstView = () => {
       </div>
 
       {/* Quick Facts Bar */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
@@ -197,7 +221,9 @@ const FirstView = () => {
                 <Calendar className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500">Best Time to Visit</h3>
+                <h3 className="text-sm font-medium text-gray-500">
+                  Best Time to Visit
+                </h3>
                 <p className="font-semibold">{stateData.bestTimeToVisit}</p>
               </div>
             </div>
@@ -215,7 +241,9 @@ const FirstView = () => {
                 <MapPin className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500">Ideal Duration</h3>
+                <h3 className="text-sm font-medium text-gray-500">
+                  Ideal Duration
+                </h3>
                 <p className="font-semibold">{stateData.idealDuration}</p>
               </div>
             </div>
@@ -226,7 +254,7 @@ const FirstView = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16">
         {/* About Section with Tabs */}
-        <motion.div 
+        <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -236,27 +264,39 @@ const FirstView = () => {
           <div className="border-b border-gray-200">
             <nav className="flex -mb-px">
               <button
-                onClick={() => setActiveTab('highlights')}
-                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${activeTab === 'highlights' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab("highlights")}
+                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                  activeTab === "highlights"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
                 Highlights
               </button>
               <button
-                onClick={() => setActiveTab('description')}
-                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${activeTab === 'description' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab("description")}
+                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                  activeTab === "description"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
                 About {stateData.name}
               </button>
               <button
-                onClick={() => setActiveTab('tips')}
-                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${activeTab === 'tips' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setActiveTab("tips")}
+                className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                  activeTab === "tips"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
+                }`}
               >
                 Travel Tips
               </button>
             </nav>
           </div>
           <div className="p-6 md:p-8">
-            {activeTab === 'highlights' && (
+            {activeTab === "highlights" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {stateData.highlights?.map((highlight, index) => (
                   <div key={index} className="flex items-start gap-4">
@@ -268,24 +308,36 @@ const FirstView = () => {
                 ))}
               </div>
             )}
-            {activeTab === 'description' && (
+            {activeTab === "description" && (
               <div className="prose max-w-none">
                 <p className="text-gray-700">{stateData.description}</p>
               </div>
             )}
-            {activeTab === 'tips' && (
+            {activeTab === "tips" && (
               <div className="space-y-6">
                 <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
-                  <h4 className="font-semibold text-blue-800 mb-2">Best Time to Visit</h4>
+                  <h4 className="font-semibold text-blue-800 mb-2">
+                    Best Time to Visit
+                  </h4>
                   <p className="text-gray-700">{stateData.bestTimeToVisit}</p>
                 </div>
                 <div className="bg-green-50/50 p-4 rounded-lg border border-green-100">
-                  <h4 className="font-semibold text-green-800 mb-2">Local Customs</h4>
-                  <p className="text-gray-700">Respect local traditions and dress modestly when visiting religious sites.</p>
+                  <h4 className="font-semibold text-green-800 mb-2">
+                    Local Customs
+                  </h4>
+                  <p className="text-gray-700">
+                    Respect local traditions and dress modestly when visiting
+                    religious sites.
+                  </p>
                 </div>
                 <div className="bg-yellow-50/50 p-4 rounded-lg border border-yellow-100">
-                  <h4 className="font-semibold text-yellow-800 mb-2">Transportation</h4>
-                  <p className="text-gray-700">Taxis and local transport are readily available. Consider renting a scooter for more flexibility.</p>
+                  <h4 className="font-semibold text-yellow-800 mb-2">
+                    Transportation
+                  </h4>
+                  <p className="text-gray-700">
+                    Taxis and local transport are readily available. Consider
+                    renting a scooter for more flexibility.
+                  </p>
                 </div>
               </div>
             )}
@@ -301,14 +353,16 @@ const FirstView = () => {
             variants={fadeInUp}
             className="mb-16"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Explore {stateData.name}'s Top Cities</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+              Explore {stateData.name}'s Top Cities
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {stateData.cities.map((city, idx) => (
                 <motion.div
                   key={idx}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className="group relative overflow-hidden rounded-2xl shadow-lg h-64"
                 >
                   <img
@@ -318,13 +372,18 @@ const FirstView = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                   <div className="absolute bottom-0 left-0 p-6 w-full">
-                    <h3 className="text-xl font-bold text-white mb-1">{city.name}</h3>
-                    <p className="text-white/90 text-sm line-clamp-2">{city.description}</p>
-                    <button 
+                    <h3 className="text-xl font-bold text-white mb-1">
+                      {city.name}
+                    </h3>
+                    <p className="text-white/90 text-sm line-clamp-2">
+                      {city.description}
+                    </p>
+                    <button
                       className="mt-3 flex items-center text-white font-medium text-sm group-hover:text-primary transition-colors"
                       onClick={() => handleCitySelect(city)}
                     >
-                      Explore <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      Explore{" "}
+                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
                 </motion.div>
@@ -348,7 +407,7 @@ const FirstView = () => {
             >
               <X className="w-5 h-5 text-gray-700" />
             </button>
-            
+
             <div className="relative h-64 w-full overflow-hidden">
               <img
                 src={`https://craftedvacays.grandeurnet.in/${selectedCity.image}`}
@@ -357,7 +416,9 @@ const FirstView = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
               <div className="absolute bottom-0 left-0 p-6 w-full">
-                <h2 className="text-3xl font-bold text-white">{selectedCity.name}</h2>
+                <h2 className="text-3xl font-bold text-white">
+                  {selectedCity.name}
+                </h2>
                 <p className="text-white/90">{selectedCity.description}</p>
               </div>
             </div>
@@ -365,22 +426,28 @@ const FirstView = () => {
             <div className="p-6 md:p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-xl font-bold mb-4">About {selectedCity.name}</h3>
-                  <p className="text-gray-700 mb-6">{selectedCity.description || 'Discover the beauty and culture of this amazing city.'}</p>
-                  
-                  {selectedCity.highlights && selectedCity.highlights.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-3">Highlights</h4>
-                      <ul className="space-y-2">
-                        {selectedCity.highlights.map((highlight, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <Star className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                            <span className="text-gray-700">{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  <h3 className="text-xl font-bold mb-4">
+                    About {selectedCity.name}
+                  </h3>
+                  <p className="text-gray-700 mb-6">
+                    {selectedCity.description ||
+                      "Discover the beauty and culture of this amazing city."}
+                  </p>
+
+                  {selectedCity.highlights &&
+                    selectedCity.highlights.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-3">Highlights</h4>
+                        <ul className="space-y-2">
+                          {selectedCity.highlights.map((highlight, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <Star className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                              <span className="text-gray-700">{highlight}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                 </div>
 
                 <div>
@@ -391,21 +458,31 @@ const FirstView = () => {
                         <MapPin className="w-5 h-5 text-primary" />
                         Location
                       </h4>
-                      <p className="text-gray-700">{selectedCity.name}, {stateData.name}</p>
+                      <p className="text-gray-700">
+                        {selectedCity.name}, {stateData.name}
+                      </p>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <h4 className="font-semibold mb-2 flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-primary" />
                         Best Time to Visit
                       </h4>
-                      <p className="text-gray-700">{selectedCity.bestTimeToVisit || stateData.bestTimeToVisit || 'Year-round'}</p>
+                      <p className="text-gray-700">
+                        {selectedCity.bestTimeToVisit ||
+                          stateData.bestTimeToVisit ||
+                          "Year-round"}
+                      </p>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <h4 className="font-semibold mb-2 flex items-center gap-2">
                         <Users className="w-5 h-5 text-primary" />
                         Ideal Duration
                       </h4>
-                      <p className="text-gray-700">{selectedCity.idealDuration || stateData.idealDuration || '2-3 days'}</p>
+                      <p className="text-gray-700">
+                        {selectedCity.idealDuration ||
+                          stateData.idealDuration ||
+                          "2-3 days"}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -413,7 +490,9 @@ const FirstView = () => {
 
               {selectedCity.tours && selectedCity.tours.length > 0 && (
                 <div className="mt-10">
-                  <h3 className="text-2xl font-bold mb-6">Popular Tours in {selectedCity.name}</h3>
+                  <h3 className="text-2xl font-bold mb-6">
+                    Popular Tours in {selectedCity.name}
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {selectedCity.tours.slice(0, 4).map((tour, index) => (
                       <TourPackageCard key={index} tour={tour} />
@@ -434,7 +513,9 @@ const FirstView = () => {
             variants={fadeInUp}
             className="mb-16"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Popular Tours in {stateData.name}</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+              Popular Tours in {stateData.name}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {relatedTours.slice(0, 6).map((tour, index) => (
                 <TourPackageCard key={index} tour={tour} />
@@ -471,8 +552,8 @@ const FirstView = () => {
         </motion.div>
 
         {/* Related Destinations */}
-        <StateTourPackageSlider 
-          state={stateData.name} 
+        <StateTourPackageSlider
+          state={stateData.name}
           excludeSlug={params?.slug}
           title={`More to explore in ${countrySlug}`}
         />

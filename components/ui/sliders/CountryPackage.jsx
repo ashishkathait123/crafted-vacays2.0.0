@@ -13,7 +13,7 @@ import "swiper/css/scrollbar";
 
 const CountryPackage = ({ countryFilter }) => {
   const [packages, setPackages] = useState([]);
-  const { convertPrice, currencySymbol } = useCurrency();
+  const { currencySymbol } = useCurrency();
   const router = useRouter();
 
   useEffect(() => {
@@ -39,6 +39,7 @@ const CountryPackage = ({ countryFilter }) => {
         <h2 className="text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-lg mb-6 text-center">
           Related Tour Packages in {countryFilter}
         </h2>
+
         <Swiper
           modules={[Autoplay, Navigation, Scrollbar]}
           spaceBetween={20}
@@ -52,31 +53,30 @@ const CountryPackage = ({ countryFilter }) => {
           autoplay={{ delay: 3000 }}
           scrollbar={{ draggable: true }}
         >
-          {packages.map((pkg) => (
-           <SwiperSlide key={pkg.id}>
-                         <TourPackageCard
-                           packageData={{
-                             title: pkg.title,
-                             location: `${pkg.city_name}, ${pkg.state_name}`,
-                             tourType: pkg.tourType || "Explore",
-                             duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
-                             itinerary: pkg.itinerary?.slice(0, 50) + "...",
-                             rating: 4,
-                             guests: 2,
-                             originalPrice: `${currencySymbol}${convertPrice(
-                               parseFloat(pkg.price) * 1.2
-                             ).toFixed(2)}`,
-                             discountedPrice: `${currencySymbol}${convertPrice(
-                               parseFloat(pkg.price)
-                             ).toFixed(2)}`,
-                           images: pkg.images?.length
-             ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
-             : ["/images/bg/default.jpg"]
-                           }}
-                           onClick={() => router.push(`/tour-details/${pkg.slug}`)}
-                         />
-                       </SwiperSlide>
-          ))}
+          {packages.map((pkg) => {
+            const priceINR = parseFloat(pkg.price) || 0;
+            return (
+              <SwiperSlide key={pkg.id}>
+                <TourPackageCard
+                  packageData={{
+                    title: pkg.title,
+                    location: `${pkg.city_name}, ${pkg.state_name}`,
+                    tourType: pkg.tourType || "Explore",
+                    duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
+                    itinerary: pkg.itinerary?.slice(0, 50) + "...",
+                    rating: 4,
+                    guests: 2,
+                    originalPrice: priceINR * 1.2,
+                    discountedPrice: priceINR,
+                    images: pkg.images?.length
+                      ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
+                      : ["/images/bg/default.jpg"],
+                  }}
+                  onClick={() => router.push(`/tour-details/${pkg.slug}`)}
+                />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
     </Container>

@@ -16,41 +16,59 @@ const DestinationCard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { fetchDestinationsFromWP } = await import("@/lib/api/destinations");
-        const data = await fetchDestinationsFromWP();
+useEffect(() => {
+  const getData = async () => {
+    try {
+      const { fetchDestinationsFromWP } = await import("@/lib/api/destinations");
+      const destinationsData = await fetchDestinationsFromWP();
 
-        const processed = data.map((d) => {
-          let image = FALLBACK_IMAGE;
+      const toursResponse = await fetch("https://craftedvacays.grandeurnet.in/get-tours.php");
+      const tourData = await toursResponse.json();
+      const tours = tourData?.tours || [];
 
-          if (Array.isArray(d.images) && d.images.length > 0) {
-            const img = d.images[0];
+      const processed = destinationsData.map((d) => {
+        let image = FALLBACK_IMAGE;
+        if (Array.isArray(d.images) && d.images.length > 0) {
+          const img = d.images[0];
+          image = img.startsWith("http")
+            ? img
+            : `${BASE_UPLOAD_URL}${img.replace(/^\/+/, "")}`;
+        }
 
-            if (typeof img === "string") {
-              image = img.startsWith("http")
-                ? img
-                : img.includes("uploads/states/")
-                ? `craftedvacays.grandeurnet.in/get-tours.php/${img.replace(/^\/+/, "")}`
-                : `${BASE_UPLOAD_URL}${img.replace(/^\/+/, "")}`;
-            }
-          }
+        const dTitle = d.title?.trim().toLowerCase() || "";
 
-          return { ...d, image };
+        const matchingTours = tours.filter((tour) => {
+          const countryMatch = (tour.country_name || "").toLowerCase() === dTitle;
+          const stateMatch = (tour.state_name || "").toLowerCase() === dTitle;
+          const cityMatch = (tour.city_name || "").toLowerCase() === dTitle;
+          return countryMatch || stateMatch || cityMatch;
         });
 
-        setDestinations(processed);
-        setLoading(false);
-      } catch (err) {
-        console.error("❌ Error fetching destinations:", err);
-        setError("Failed to load destinations.");
-        setLoading(false);
-      }
-    };
+        return {
+          ...d,
+          image,
+          tours: matchingTours.length,
+        };
+      });
 
-    getData();
-  }, []);
+      // ✅ Only include state-level destinations
+      const citySlugs = ['dehradun', 'jaipur'];
+      const filteredStates = processed.filter(
+        (d) => !citySlugs.includes(d.slug?.toLowerCase())
+      );
+
+      setDestinations(filteredStates);
+      setLoading(false);
+    } catch (err) {
+      console.error("❌ Error fetching destinations or tours:", err);
+      setError("Failed to load destinations.");
+      setLoading(false);
+    }
+  };
+
+  getData();
+}, []);
+
 
   if (loading) return <p className="text-center text-gray-500">Loading destinations...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -83,13 +101,13 @@ const DestinationCard = () => {
             >
               <div className="absolute inset-0 bg-black/50 z-0" />
               <span className="absolute top-3 left-3 z-10 bg-orange-500 text-white px-3 py-1 text-sm rounded">
-                {destination.tours || 0} Tours
+                {destination.tours} {destination.tours === 1 ? "Tour" : "Tours"}
               </span>
               <div className="absolute bottom-0 left-0 right-0 p-5 z-10 text-white">
                 <h2 className="text-xl font-bold">{destination.title}</h2>
                 <p className="line-clamp-2">{destination.description}</p>
                 <Link
-                  href={`/destinations/${destination.parent?.slug}/${destination.slug}`}
+                  href={`/destinations/india/${destination.slug}`}
                   className="inline-block mt-3 px-4 py-2 bg-white text-orange-600 font-semibold rounded shadow hover:bg-orange-100 transition"
                 >
                   Explore

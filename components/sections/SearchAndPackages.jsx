@@ -6,7 +6,8 @@ import TourPackage from '../ui/sliders/TourPackageSlider';
 
 const SearchAndPackages = () => {
   const [filters, setFilters] = useState({
-    location: '',
+    // location: '',
+    country_name: '',
     duration: '',
     tourType: '',
     guests: '',

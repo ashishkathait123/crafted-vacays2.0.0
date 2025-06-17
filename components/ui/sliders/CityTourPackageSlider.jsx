@@ -26,7 +26,6 @@ const SocialShare = styled(Box)({
 
 const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
   const [packages, setPackages] = useState([]);
-  const { convertPrice, currencySymbol } = useCurrency();
   const router = useRouter();
 
   useEffect(() => {
@@ -67,7 +66,7 @@ const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
           Discover these Instagram-worthy tours curated just for you!
         </p>
       </Box>
-      
+
       <Swiper
         modules={[Autoplay, Navigation, Scrollbar]}
         spaceBetween={30}
@@ -83,48 +82,48 @@ const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
         scrollbar={{ draggable: true }}
         style={{ padding: '20px 10px' }}
       >
-        {packages.map((pkg) => (
-          <SwiperSlide key={pkg.id} style={{ position: 'relative' }}>
-            <SocialShare>
-              <IconButton onClick={() => handleShare(pkg)} sx={{ color: '#1877f2' }}>
-                <ShareIcon />
-              </IconButton>
-              <IconButton sx={{ color: '#e1306c' }} onClick={() => window.open('https://instagram.com')}>
-                <InstagramIcon />
-              </IconButton>
-            </SocialShare>
-            
-            <TourPackageCard
-              packageData={{
-                title: pkg.title,
-                location: `${pkg.city_name}, ${pkg.state_name}`,
-                tourType: pkg.tourType || "Bucket List Experience",
-                duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
-                itinerary: pkg.itinerary?.slice(0, 50) + "...",
-                rating: 4,
-                guests: 2,
-                originalPrice: `${currencySymbol}${convertPrice(
-                  parseFloat(pkg.price) * 1.2
-                ).toFixed(2)}`,
-                discountedPrice: `${currencySymbol}${convertPrice(
-                  parseFloat(pkg.price)
-                ).toFixed(2)}`,
-                images: pkg.images?.length
-                  ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
-                  : ["/images/bg/default.jpg"],
-                highlightBadge: "🔥 Trending Now",
-                instagramHint: "Tag #CraftedVacays for a feature!"
-              }}
-              onClick={() => router.push(`/tour-details/${pkg.slug}`)}
-            />
-          </SwiperSlide>
-        ))}
+        {packages.map((pkg) => {
+          const priceINR = parseFloat(pkg.price) || 0;
+
+          return (
+            <SwiperSlide key={pkg.id} style={{ position: 'relative' }}>
+              <SocialShare>
+                <IconButton onClick={() => handleShare(pkg)} sx={{ color: '#1877f2' }}>
+                  <ShareIcon />
+                </IconButton>
+                <IconButton sx={{ color: '#e1306c' }} onClick={() => window.open('https://instagram.com')}>
+                  <InstagramIcon />
+                </IconButton>
+              </SocialShare>
+
+              <TourPackageCard
+                packageData={{
+                  title: pkg.title,
+                  location: `${pkg.city_name}, ${pkg.state_name}`,
+                  tourType: pkg.tourType || "Bucket List Experience",
+                  duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
+                  itinerary: pkg.itinerary?.slice(0, 50) + "...",
+                  rating: 4,
+                  guests: 2,
+                  originalPrice: priceINR * 1.2,
+                  discountedPrice: priceINR,
+                  images: pkg.images?.length
+                    ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
+                    : ["/images/bg/default.jpg"],
+                  highlightBadge: "🔥 Trending Now",
+                  instagramHint: "Tag #CraftedVacays for a feature!"
+                }}
+                onClick={() => router.push(`/tour-details/${pkg.slug}`)}
+              />
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
-      
+
       <Box textAlign="center" mt={4}>
-        <Button 
-          variant="contained" 
-          size="large" 
+        <Button
+          variant="contained"
+          size="large"
           sx={{
             background: 'linear-gradient(to right, #ff8a00, #da1b60)',
             fontWeight: 'bold',

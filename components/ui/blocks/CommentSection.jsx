@@ -33,28 +33,28 @@ const CommentSection = ({ slug }) => {
   const handleSubmit = async () => {
     if (!name || !text) return;
 
-    const newComment = {
-      slug,
-      name,
-      comment: text,
-      rating,
-      location
-    };
+ const newComment = {
+  traveler_name: name,
+  hometown: location,
+  rating: rating,
+  travel_story: text,
+  slug: slug   
+};
 
     try {
-      const res = await axios.post(`${API_URL}/add-comments.php`, newComment, {
+      const res = await axios.post(`${API_URL}/add-comment.php`, newComment, {
         headers: { "Content-Type": "application/json" },
       });
 
       if (res.data.success) {
         setComments([
-          { 
-            name, 
-            comment: text, 
-            rating,
-            location,
-            created_at: new Date().toISOString() 
-          },
+    {
+      traveler_name: name,
+      hometown: location,
+      rating,
+      travel_story: text,
+      created_at: new Date().toISOString(),
+    },
           ...comments,
         ]);
         setName("");
@@ -110,7 +110,7 @@ const CommentSection = ({ slug }) => {
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-center">
-                    <p className="font-bold text-gray-800 dark:text-gray-100">{c.name}</p>
+                    <p className="font-bold text-gray-800 dark:text-gray-100">{c.traveler_name}</p>
                     {c.rating > 0 && (
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
@@ -123,24 +123,24 @@ const CommentSection = ({ slug }) => {
                     )}
                   </div>
                   
-                  {c.location && (
-                    <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 mb-1">
-                      <FaMapMarkerAlt className="mr-1" />
-                      <span>{c.location}</span>
-                    </div>
-                  )}
+                  {c.hometown && (
+  <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 mb-1">
+    <FaMapMarkerAlt className="mr-1" />
+    <span>{c.hometown}</span>
+  </div>
+)}
                   
-                  <p className="text-gray-600 dark:text-gray-300 mt-2">{c.comment}</p>
+                 <p className="text-gray-600 dark:text-gray-300 mt-2">
+  {c.travel_story}
+</p>
+
                   
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    {new Date(c.created_at).toLocaleString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </p>
+                {new Date(c.created_at).toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+})}
+
                 </div>
               </div>
             </div>

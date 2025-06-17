@@ -121,9 +121,10 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
         top: 0,
         left: 0,
         width: isMobile ? '280px' : 'auto',
-        height: isMobile ? '100vh' : 'auto',
+        height: isMobile ? '75vh' : 'auto',
         zIndex: isMobile ? 1200 : 'auto',
         overflowY: 'auto',
+        marginTop: isMobile ? '132px' : 0,
       }}
     >
       {isMobile && (
@@ -417,7 +418,8 @@ const ToursPage = () => {
       bgcolor: 'background.default', 
       color: 'text.primary', 
       minHeight: '100vh',
-      backgroundImage: 'linear-gradient(to bottom, #f9f9ff, #ffffff)'
+      backgroundImage: 'linear-gradient(to bottom, #f9f9ff, #ffffff)',
+    marginTop: isMobile ? '75px' : 0,
     }}>
       <Container maxWidth="xl" sx={{ py: 6 }}>
         <Box sx={{ mb: 6, textAlign: 'center' }}>

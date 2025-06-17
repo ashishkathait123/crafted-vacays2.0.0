@@ -51,8 +51,9 @@ const TourPackageCard = ({ packageData, onClick }) => {
 
   const safePrice = (price) => (isNaN(price) || price <= 0 ? 0 : price);
 
-  const originalPriceNum = parsePrice(packageData.originalPrice);
-  const discountedPriceNum = parsePrice(packageData.discountedPrice);
+ const originalPriceNum = packageData.originalPrice ?? 0;
+const discountedPriceNum = packageData.discountedPrice ?? 0;
+
 
   const calculatePrice = () => {
     let basePrice = safePrice(discountedPriceNum);
@@ -151,6 +152,9 @@ const TourPackageCard = ({ packageData, onClick }) => {
           <FaLocationDot /> {packageData.location}
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
+          <FaLocationDot /> {packageData.country_name}
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
           🧭 {packageData.tourType}
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
@@ -197,11 +201,12 @@ const TourPackageCard = ({ packageData, onClick }) => {
       {/* Pricing */}
       <Box sx={{ position: "relative", zIndex: 2, textAlign: "center", mb: 2 }}>
         <Typography variant="body2" sx={{ textDecoration: "line-through", opacity: 0.7 }}>
-          {currencySymbol} {convertPrice(safePrice(originalPriceNum))}
-        </Typography>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          {currencySymbol} {calculatePrice()}
-        </Typography>
+  {currencySymbol} {convertPrice(originalPriceNum).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+</Typography>
+<Typography variant="h6" sx={{ fontWeight: "bold" }}>
+  {currencySymbol} {calculatePrice().toLocaleString(undefined, { minimumFractionDigits: 2 })}
+</Typography>
+
         <Typography variant="caption" sx={{ opacity: 0.8 }}>
           Approx Price without flights
         </Typography>

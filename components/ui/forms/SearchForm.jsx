@@ -1,17 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  FiSearch,
-  FiCalendar,
-  FiUsers,
-  FiMapPin,
-  FiClock,
-  FiGlobe,
-} from "react-icons/fi";
+import { FiSearch, FiMapPin, FiGlobe } from "react-icons/fi";
 
 export default function SearchForm({ filters, onFilterChange }) {
   const [localFilters, setLocalFilters] = useState({
-    destination: filters.location || "",
+    destination: filters.country_name || "",
     duration_days: filters.duration_days || "",
     duration_nights: filters.duration_nights || "",
     tourType: filters.tourType || "",
@@ -21,7 +14,7 @@ export default function SearchForm({ filters, onFilterChange }) {
 
   useEffect(() => {
     setLocalFilters({
-      destination: filters.location || "",
+      destination: filters.country_name || "",
       duration_days: filters.duration_days || "",
       duration_nights: filters.duration_nights || "",
       tourType: filters.tourType || "",
@@ -39,7 +32,7 @@ export default function SearchForm({ filters, onFilterChange }) {
 
   const handleSearch = () => {
     onFilterChange({
-      location: localFilters.destination,
+      country_name: localFilters.destination,
       duration_days: localFilters.duration_days,
       duration_nights: localFilters.duration_nights,
       tourType: localFilters.tourType,
@@ -48,43 +41,54 @@ export default function SearchForm({ filters, onFilterChange }) {
     });
   };
 
+  const dayOptions = Array.from({ length: 11 }, (_, i) => (i === 10 ? "10+" : `${i + 1}`));
+  const nightOptions = Array.from({ length: 11 }, (_, i) => (i === 10 ? "10+" : `${i + 1}`));
+
   return (
     <div className="bg-white dark:bg-gray-950 rounded-xl shadow-2xl p-4 sm:p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {/* Destination */}
+        {/* Destination Dropdown */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FiMapPin className="text-gray-400" />
           </div>
-          <input
-            type="text"
+          <select
             className="pl-10 w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
-            placeholder="Destination"
             value={localFilters.destination}
             onChange={handleChange("destination")}
-          />
+          >
+            <option value="">Select Country</option>
+            <option value="India">India</option>
+            <option value="Vietnam">Vietnam</option>
+            <option value="Indonesia">Indonesia</option>
+            <option value="Thailand">Thailand</option>
+            <option value="Sri Lanka">Sri Lanka</option>
+          </select>
         </div>
 
-        {/* Duration */}
-        <div>
-          <div className="flex gap-2 flex-col sm:flex-row">
-            <input
-              type="number"
-              min="0"
-              placeholder="Days"
-              className="w-full sm:w-1/2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
-              value={localFilters.duration_days}
-              onChange={handleChange("duration_days")}
-            />
-            <input
-              type="number"
-              min="0"
-              placeholder="Nights"
-              className="w-full sm:w-1/2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
-              value={localFilters.duration_nights}
-              onChange={handleChange("duration_nights")}
-            />
-          </div>
+        {/* Days & Nights Dropdowns */}
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <select
+            className="w-full sm:w-1/2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
+            value={localFilters.duration_days}
+            onChange={handleChange("duration_days")}
+          >
+            <option value="">Days</option>
+            {dayOptions.map((day) => (
+              <option key={day} value={day}>{day} Day{day !== "1" ? "s" : ""}</option>
+            ))}
+          </select>
+
+          <select
+            className="w-full sm:w-1/2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
+            value={localFilters.duration_nights}
+            onChange={handleChange("duration_nights")}
+          >
+            <option value="">Nights</option>
+            {nightOptions.map((night) => (
+              <option key={night} value={night}>{night} Night{night !== "1" ? "s" : ""}</option>
+            ))}
+          </select>
         </div>
 
         {/* Tour Type */}
@@ -106,20 +110,18 @@ export default function SearchForm({ filters, onFilterChange }) {
           </select>
         </div>
 
-        {/* Min Price */}
+        {/* Min/Max Price */}
         <input
           type="number"
           placeholder="Min Price (₹)"
-          className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
+          className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-900 dark:text-white"
           value={localFilters.minPrice}
           onChange={handleChange("minPrice")}
         />
-
-        {/* Max Price */}
         <input
           type="number"
           placeholder="Max Price (₹)"
-          className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-900 dark:text-white"
+          className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-900 dark:text-white"
           value={localFilters.maxPrice}
           onChange={handleChange("maxPrice")}
         />
