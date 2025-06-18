@@ -215,9 +215,9 @@ const TourDetailsPage = () => {
               <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <FaMapMarkerAlt /> {city_name}, {state_name}
               </Typography>
-              <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              {/* <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 <FaStar color="gold" /> 4.8 (1.6k reviews)
-              </Typography>
+              </Typography> */}
             </Box>
           </Box>
 

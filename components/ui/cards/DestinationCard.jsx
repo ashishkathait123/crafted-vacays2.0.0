@@ -8,59 +8,46 @@ import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import Link from "next/link";
 
-const BASE_UPLOAD_URL = "https://craftedvacays.grandeurnet.in/uploads/states/";
-const FALLBACK_IMAGE = `${BASE_UPLOAD_URL}1748091523_befunky-collage-2024-05-26t102953-1716699598.jpg`;
+const BASE_UPLOAD_URL = "https://craftedvacays.grandeurnet.in/";
 
 const DestinationCard = () => {
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-useEffect(() => {
+ useEffect(() => {
   const getData = async () => {
     try {
-      const { fetchDestinationsFromWP } = await import("@/lib/api/destinations");
-      const destinationsData = await fetchDestinationsFromWP();
+      const res = await fetch("https://craftedvacays.grandeurnet.in/get-tours.php");
+      const json = await res.json();
 
-      const toursResponse = await fetch("https://craftedvacays.grandeurnet.in/get-tours.php");
-      const tourData = await toursResponse.json();
-      const tours = tourData?.tours || [];
+      const countries = Array.isArray(json?.destinations) ? json.destinations : [];
+      const tours = Array.isArray(json?.tours) ? json.tours : [];
 
-      const processed = destinationsData.map((d) => {
-        let image = FALLBACK_IMAGE;
-        if (Array.isArray(d.images) && d.images.length > 0) {
-          const img = d.images[0];
-          image = img.startsWith("http")
-            ? img
-            : `${BASE_UPLOAD_URL}${img.replace(/^\/+/, "")}`;
-        }
+      const allStates = countries.flatMap((country) => {
+        const states = Array.isArray(country.states) ? country.states : [];
+        return states.map((state) => {
+          const stateId = state.id;
+          const matchingTours = tours.filter((tour) => tour.state_id === stateId);
 
-        const dTitle = d.title?.trim().toLowerCase() || "";
-
-        const matchingTours = tours.filter((tour) => {
-          const countryMatch = (tour.country_name || "").toLowerCase() === dTitle;
-          const stateMatch = (tour.state_name || "").toLowerCase() === dTitle;
-          const cityMatch = (tour.city_name || "").toLowerCase() === dTitle;
-          return countryMatch || stateMatch || cityMatch;
+          return {
+            ...state,
+            countryName: country.name,
+            countrySlug: (country.name || "").toLowerCase().replace(/\s+/g, "-"),
+            image: state.image?.startsWith("http")
+              ? state.image
+              : `${BASE_UPLOAD_URL}${state.image}`,
+            tours: matchingTours.length,
+            description: state.short_description || "",
+          };
         });
-
-        return {
-          ...d,
-          image,
-          tours: matchingTours.length,
-        };
       });
 
-      // ✅ Only include state-level destinations
-      const citySlugs = ['dehradun', 'jaipur'];
-      const filteredStates = processed.filter(
-        (d) => !citySlugs.includes(d.slug?.toLowerCase())
-      );
-
-      setDestinations(filteredStates);
+      console.log("✅ Processed destinations:", allStates);
+      setDestinations(allStates);
       setLoading(false);
     } catch (err) {
-      console.error("❌ Error fetching destinations or tours:", err);
+      console.error("❌ Error fetching destinations:", err);
       setError("Failed to load destinations.");
       setLoading(false);
     }
@@ -94,7 +81,7 @@ useEffect(() => {
         }}
       >
         {destinations.map((destination, index) => (
-          <SwiperSlide key={`${destination.slug || destination.title}-${index}`}>
+          <SwiperSlide key={`${destination.slug || destination.name}-${index}`}>
             <div
               className="relative w-full h-[350px] md:h-[400px] lg:h-[450px] xl:h-[350px] rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 bg-cover bg-center"
               style={{ backgroundImage: `url(${destination.image})` }}
@@ -104,10 +91,10 @@ useEffect(() => {
                 {destination.tours} {destination.tours === 1 ? "Tour" : "Tours"}
               </span>
               <div className="absolute bottom-0 left-0 right-0 p-5 z-10 text-white">
-                <h2 className="text-xl font-bold">{destination.title}</h2>
+                <h2 className="text-xl font-bold">{destination.name}</h2>
                 <p className="line-clamp-2">{destination.description}</p>
                 <Link
-                  href={`/destinations/india/${destination.slug}`}
+                  href={`/destinations/${destination.countrySlug}/${destination.slug}`}
                   className="inline-block mt-3 px-4 py-2 bg-white text-orange-600 font-semibold rounded shadow hover:bg-orange-100 transition"
                 >
                   Explore

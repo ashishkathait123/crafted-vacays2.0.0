@@ -171,7 +171,7 @@ const AllDestinationsPage = () => {
                   title={country.name}
                   slug={country.name.toLowerCase().replace(/\s+/g, '-')}
                   image={`https://craftedvacays.grandeurnet.in/${country.image}`}
-                  tours={country.states?.length || 0}
+                  Destinatons={country.states?.length || 0}
                   departures={
                     country.states?.reduce((total, state) => total + (state?.cities?.length || 0), 0) || 0
                   }

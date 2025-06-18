@@ -3,6 +3,10 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Grid,
+  FormControl,
+   InputLabel,
+  Select,
+  MenuItem,
   Typography,
   Checkbox,
   FormGroup,
@@ -26,6 +30,21 @@ import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { styled } from '@mui/material/styles';
 
+
+const allDestinations = [
+  // India
+  "Rajasthan", "Goa", "Kerala", "Ladakh", "Himachal Pradesh", "Uttarakhand",
+  // Nepal
+  "Kathmandu", "Pokhara",
+  // Bhutan
+  "Thimphu", "Paro",
+  // Indonesia
+  "Bali", "Jakarta", "Yogyakarta",
+  // Thailand
+  "Bangkok", "Phuket", "Chiang Mai",
+  // Europe (example regions/cities)
+  "Paris", "Rome", "Barcelona", "Zurich"
+];
 // === STYLES ===
 const StyledTourCard = styled(Paper)(({ theme }) => ({
   display: 'flex',
@@ -89,18 +108,20 @@ const FilterButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-// === FILTER SIDEBAR ===
 const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleChange = (category, value) => {
-    setFilters((prev) => ({
-      ...prev,
-      [category]: prev[category].includes(value)
-        ? prev[category].filter((v) => v !== value)
-        : [...prev[category], value],
-    }));
+    setFilters((prev) => {
+      const current = prev?.[category] ?? [];
+      return {
+        ...prev,
+        [category]: current.includes(value)
+          ? current.filter((v) => v !== value)
+          : [...current, value],
+      };
+    });
   };
 
   const handlePriceChange = (event, newValue) => {
@@ -108,50 +129,65 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
   };
 
   return (
-    <Box 
-      sx={{ 
+    <Box
+      sx={{
         p: 3,
-        bgcolor: 'background.paper',
-        color: 'text.primary',
+        bgcolor: "background.paper",
+        color: "text.primary",
         borderRadius: 3,
         border: `1px solid ${theme.palette.divider}`,
         boxShadow: 3,
-        display: isMobile ? (mobileOpen ? 'block' : 'none') : 'block',
-        position: isMobile ? 'fixed' : 'static',
+        display: isMobile ? (mobileOpen ? "block" : "none") : "block",
+        position: isMobile ? "fixed" : "static",
         top: 0,
         left: 0,
-        width: isMobile ? '280px' : 'auto',
-        height: isMobile ? '75vh' : 'auto',
-        zIndex: isMobile ? 1200 : 'auto',
-        overflowY: 'auto',
-        marginTop: isMobile ? '132px' : 0,
+        width: isMobile ? "280px" : "auto",
+        height: isMobile ? "75vh" : "auto",
+        zIndex: isMobile ? 1200 : "auto",
+        overflowY: "auto",
+        marginTop: isMobile ? "132px" : 0,
       }}
     >
       {isMobile && (
-        <Button 
+        <Button
           onClick={() => setMobileOpen(false)}
-          sx={{ position: 'absolute', top: 8, right: 8 }}
+          sx={{ position: "absolute", top: 8, right: 8 }}
         >
           ✕
         </Button>
       )}
-      
-      <Typography variant="h6" fontWeight="bold" mb={2} sx={{ display: 'flex', alignItems: 'center' }}>
+
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        mb={2}
+        sx={{ display: "flex", alignItems: "center" }}
+      >
         <FilterListIcon sx={{ mr: 1 }} /> Find Your Perfect Trip
       </Typography>
-      
+
+      {/* Tour Type */}
       <Box mb={3}>
-        <Typography fontWeight="bold" mb={1} color="primary">Tour Type</Typography>
+        <Typography fontWeight="bold" mb={1} color="primary">
+          Tour Type
+        </Typography>
         <FormGroup>
-          {["Nature Escapes", "Adventure Thrills", "Cultural Journeys", "Foodie Trails", "City Explorations", "Luxury Cruises"].map((type) => (
+          {[
+            "Nature Escapes",
+            "Adventure Thrills",
+            "Cultural Journeys",
+            "Foodie Trails",
+            "City Explorations",
+            "Luxury Cruises",
+          ].map((type) => (
             <FormControlLabel
               key={type}
               control={
-                <Checkbox 
+                <Checkbox
                   size="small"
-                  checked={filters.type.includes(type)}
+                  checked={(filters?.type ?? []).includes(type)}
                   onChange={() => handleChange("type", type)}
-                  sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
+                  sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
                   color="primary"
                 />
               }
@@ -163,47 +199,50 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
 
       <Divider sx={{ my: 2 }} />
 
+      {/* Price Range */}
       <Box mb={3}>
-        <Typography fontWeight="bold" mb={1} color="primary">Price Range</Typography>
+        <Typography fontWeight="bold" mb={1} color="primary">
+          Price Range
+        </Typography>
         <Slider
-          value={filters.price}
+          value={filters?.price ?? [1000, 50000]}
           onChange={handlePriceChange}
           min={20}
           max={70000}
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => `₹${value}`}
-          sx={{ 
-            color: '#FF6600',
-            '& .MuiSlider-thumb': {
+          sx={{
+            color: "#FF6600",
+            "& .MuiSlider-thumb": {
               height: 20,
               width: 20,
-              backgroundColor: '#fff',
-              border: '2px solid #FF6600',
+              backgroundColor: "#fff",
+              border: "2px solid #FF6600",
             },
-            mb: 2 
+            mb: 2,
           }}
         />
         <Box display="flex" justifyContent="space-between">
-          <Typography variant="body2">₹{filters.price[0]}</Typography>
-          <Typography variant="body2">₹{filters.price[1]}</Typography>
+          <Typography variant="body2">₹{filters?.price?.[0] ?? 1000}</Typography>
+          <Typography variant="body2">₹{filters?.price?.[1] ?? 50000}</Typography>
         </Box>
-        <Button 
-          variant="contained" 
-          size="small" 
+        <Button
+          variant="contained"
+          size="small"
           fullWidth
-          sx={{ 
+          sx={{
             mt: 2,
-            backgroundColor: '#FF6600', 
-            color: '#fff',
-            fontWeight: 'bold',
-            borderRadius: '8px',
+            backgroundColor: "#FF6600",
+            color: "#fff",
+            fontWeight: "bold",
+            borderRadius: "8px",
             py: 1,
-            '&:hover': { 
-              backgroundColor: '#e65c00',
-              transform: 'translateY(-2px)',
-              boxShadow: '0 4px 8px rgba(255,102,0,0.3)'
+            "&:hover": {
+              backgroundColor: "#e65c00",
+              transform: "translateY(-2px)",
+              boxShadow: "0 4px 8px rgba(255,102,0,0.3)",
             },
-            transition: 'all 0.3s ease'
+            transition: "all 0.3s ease",
           }}
         >
           Show Tours in This Range
@@ -212,8 +251,11 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
 
       <Divider sx={{ my: 2 }} />
 
+      {/* Rating */}
       <Box mb={3}>
-        <Typography fontWeight="bold" mb={1} color="primary">Rating</Typography>
+        <Typography fontWeight="bold" mb={1} color="primary">
+          Rating
+        </Typography>
         <FormGroup>
           {[5, 4, 3].map((star) => (
             <FormControlLabel
@@ -221,9 +263,9 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
               control={
                 <Checkbox
                   size="small"
-                  checked={filters.rating.includes(star)}
+                  checked={(filters?.rating ?? []).includes(star)}
                   onChange={() => handleChange("rating", star)}
-                  sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
+                  sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
                   color="primary"
                 />
               }
@@ -236,9 +278,89 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
                     size="small"
                     emptyIcon={<StarIcon fontSize="inherit" color="disabled" />}
                   />
-                  <Typography variant="body2" ml={1} color="text.secondary">{star === 5 ? 'Exceptional' : star === 4 ? 'Very Good' : 'Good'} & Up</Typography>
+                  <Typography variant="body2" ml={1} color="text.secondary">
+                    {star === 5
+                      ? "Exceptional"
+                      : star === 4
+                      ? "Very Good"
+                      : "Good"}{" "}
+                    & Up
+                  </Typography>
                 </Box>
               }
+            />
+          ))}
+        </FormGroup>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Destination */}
+      <Box mb={3} >
+  <Typography fontWeight="bold" mb={1} color="primary">
+    Destination
+  </Typography>
+  <FormControl fullWidth size="small">
+    <InputLabel>Choose Destinations</InputLabel>
+   <Select
+  multiple
+  label="Choose Destinations"
+  value={filters?.destination ?? []}
+  onChange={(e) => {
+    const { value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      destination: typeof value === 'string' ? value.split(',') : value
+    }));
+  }}
+  renderValue={(selected) => selected.join(", ")}
+  MenuProps={{
+    disablePortal: true, // Important
+    PaperProps: {
+      sx: {
+        maxHeight: 300,
+        mt: 1,
+        zIndex: 1300, // Ensure it's above other elements
+      },
+    },
+  }}
+>
+  {allDestinations.map((region) => (
+    <MenuItem key={region} value={region}>
+      <Checkbox
+        size="small"
+        checked={(filters?.destination ?? []).includes(region)}
+      />
+      <Typography variant="body2" ml={1}>
+        {region}
+      </Typography>
+    </MenuItem>
+  ))}
+</Select>
+
+  </FormControl>
+</Box>
+      <Divider sx={{ my: 2 }} />
+
+      {/* Duration */}
+      <Box mb={3}>
+        <Typography fontWeight="bold" mb={1} color="primary">
+          Duration
+        </Typography>
+        <FormGroup>
+          {["1-3 Days", "4-7 Days", "8-14 Days", "15+ Days"].map((dur) => (
+            <FormControlLabel
+              key={dur}
+              control={
+                <Checkbox
+                  size="small"
+                  checked={(filters?.duration ?? []).includes(dur)}
+                  onChange={() => handleChange("duration", dur)}
+                  sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                  color="primary"
+                />
+              }
+              label={<Typography variant="body2">{dur}</Typography>}
             />
           ))}
         </FormGroup>
@@ -355,11 +477,13 @@ const TourCard = ({ tour }) => {
 const ToursPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [filters, setFilters] = useState({
-    type: [],
-    price: [2000, 50000],
-    rating: [],
-  });
+ const [filters, setFilters] = useState({
+  type: [],
+  price: [2000, 50000],
+  rating: [],
+  destination: [],
+  duration: []
+});
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -406,12 +530,39 @@ const ToursPage = () => {
     fetchTours();
   }, []);
 
-  const filteredTours = tours.filter((tour) => {
-    const matchesType = filters.type.length === 0 || filters.type.some(type => tour.type.includes(type.split(' ')[0]));
-    const matchesPrice = tour.price >= filters.price[0] && tour.price <= filters.price[1];
-    const matchesRating = filters.rating.length === 0 || filters.rating.includes(Math.floor(tour.rating));
-    return matchesType && matchesPrice && matchesRating;
-  });
+ const filteredTours = tours.filter((tour) => {
+  // Type filter
+  const matchesType = filters.type.length === 0 || 
+    filters.type.some(type => tour.type.includes(type.split(' ')[0]));
+  
+  // Price filter
+  const matchesPrice = tour.price >= filters.price[0] && 
+    tour.price <= filters.price[1];
+  
+  // Rating filter
+  const matchesRating = filters.rating.length === 0 || 
+    filters.rating.includes(Math.floor(tour.rating));
+  
+  // Destination filter
+  const matchesDestination = filters.destination?.length === 0 || 
+    (filters.destination && tour.location.includes(filters.destination[0]));
+  
+  // Duration filter - this needs to parse the duration string
+  const matchesDuration = filters.duration?.length === 0 || 
+    (filters.duration && filters.duration.some(dur => {
+      const daysMatch = tour.duration.match(/(\d+) Day/);
+      if (!daysMatch) return false;
+      const days = parseInt(daysMatch[1]);
+      
+      if (dur === "1-3 Days") return days >= 1 && days <= 3;
+      if (dur === "4-7 Days") return days >= 4 && days <= 7;
+      if (dur === "8-14 Days") return days >= 8 && days <= 14;
+      if (dur === "15+ Days") return days >= 15;
+      return false;
+    }));
+  
+  return matchesType && matchesPrice && matchesRating && matchesDestination && matchesDuration;
+});
 
   return (
     <Box sx={{ 
