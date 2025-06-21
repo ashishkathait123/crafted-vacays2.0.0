@@ -34,8 +34,14 @@ const FirstView = () => {
     fetch("https://craftedvacays.grandeurnet.in/get-tours.php")
       .then((res) => res.json())
       .then((data) => {
-        const destination = data.destinations.find(
-          (d) => d.name?.toLowerCase() === countrySlug.toLowerCase()
+        console.log("Destinations:", data.destinations); // 👈 ADD THIS
+
+       const destination = data.destinations.find(
+  (d) => d.slug?.toLowerCase() === countrySlug.toLowerCase()
+);
+        console.log("Matched Country:", destination); // 👈 AND THIS
+        console.log(
+          data.destinations.map((d) => ({ name: d.name, slug: d.slug }))
         );
 
         if (!destination) {
