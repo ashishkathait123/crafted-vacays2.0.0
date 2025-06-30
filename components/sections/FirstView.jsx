@@ -24,6 +24,7 @@ const FirstView = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("highlights");
   const [selectedCity, setSelectedCity] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!countrySlug || !stateSlug) {
@@ -31,53 +32,63 @@ const FirstView = () => {
       return;
     }
 
-    fetch("https://craftedvacays.grandeurnet.in/get-tours.php")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Destinations:", data.destinations); // 👈 ADD THIS
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("https://craftedvacays.grandeurnet.in/get-tours.php");
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.destinations) {
+          throw new Error("No destinations data found");
+        }
 
-       const destination = data.destinations.find(
-  (d) => d.slug?.toLowerCase() === countrySlug.toLowerCase()
-);
-        console.log("Matched Country:", destination); // 👈 AND THIS
-        console.log(
-          data.destinations.map((d) => ({ name: d.name, slug: d.slug }))
+        const destination = data.destinations.find(
+          (d) => d.slug?.toLowerCase() === countrySlug.toLowerCase()
         );
 
         if (!destination) {
-          console.warn("Country not found:", countrySlug);
+          setError(`Country not found: ${countrySlug}`);
           setLoading(false);
           return;
         }
 
-        // 1. Try matching state
-        const matchedState = destination.states.find(
+        // 1. Match state
+        const matchedState = destination.states?.find(
           (s) => s.slug?.toLowerCase() === stateSlug.toLowerCase()
         );
 
         if (matchedState) {
-          "Matched as state:", matchedState.name;
           setStateData({
             ...matchedState,
             type: "state",
-            highlights: matchedState.highlights || [
-              "Top natural beauty spots",
-              "Rich culture and heritage",
-              "Adventure and nature experiences",
-            ],
-            bestTimeToVisit: matchedState.bestTimeToVisit || "October to March",
-            idealDuration: matchedState.idealDuration || "5-7 days",
+            highlights: matchedState.highlights
+              ? matchedState.highlights.split("\n").filter(Boolean)
+              : [
+                  "Top natural beauty spots",
+                  "Rich culture and heritage",
+                  "Adventure and nature experiences",
+                ],
+            bestTimeToVisit:
+              matchedState.best_time_to_visit || "October to March",
+            idealDuration: matchedState.ideal_duration || "5-7 days",
+            idealFor: matchedState.ideal_for || "All Travelers",
+            travelTips: matchedState.travel_tips || "",
           });
           setRelatedTours(matchedState.tours || []);
           setLoading(false);
           return;
         }
 
-        // 2. Try matching city in all states
+        // 2. Match city
         let matchedCity = null;
         let matchedParentState = null;
 
-        for (const state of destination.states) {
+        for (const state of destination.states || []) {
           const city = state.cities?.find(
             (c) => c.slug?.toLowerCase() === stateSlug.toLowerCase()
           );
@@ -89,38 +100,43 @@ const FirstView = () => {
         }
 
         if (matchedCity && matchedParentState) {
-          "Matched as city:",
-            matchedCity.name,
-            "in state:",
-            matchedParentState.name;
           setStateData({
             ...matchedCity,
             type: "city",
             short_description:
               matchedCity.short_description || matchedCity.description || "",
             highlights:
-              matchedCity.highlights || matchedParentState.highlights || [],
+              matchedCity.highlights?.split("\n").filter(Boolean) ||
+              matchedParentState.highlights?.split("\n").filter(Boolean) || [],
             bestTimeToVisit:
-              matchedCity.bestTimeToVisit ||
-              matchedParentState.bestTimeToVisit ||
+              matchedCity.best_time_to_visit ||
+              matchedParentState.best_time_to_visit ||
               "Anytime",
             idealDuration:
-              matchedCity.idealDuration ||
-              matchedParentState.idealDuration ||
+              matchedCity.ideal_duration ||
+              matchedParentState.ideal_duration ||
               "2-4 days",
+            idealFor:
+              matchedCity.ideal_for || matchedParentState.ideal_for || "Tourists",
+            travelTips:
+              matchedCity.travel_tips ||
+              matchedParentState.travel_tips ||
+              "Follow local customs.",
             parentState: matchedParentState.name,
           });
           setRelatedTours(matchedCity.tours || []);
         } else {
-          console.warn("No state or city matched for slug:", stateSlug);
+          setError(`No state or city matched for slug: ${stateSlug}`);
         }
-
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Failed to fetch destination data:", err);
+        setError(`Failed to load destination data: ${err.message}`);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [countrySlug, stateSlug]);
 
   const handleCitySelect = (city) => {
@@ -145,6 +161,26 @@ const FirstView = () => {
           <p className="mt-4 text-xl font-semibold text-gray-600">
             Discovering {stateSlug} for you...
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center py-20 px-6 bg-white rounded-xl shadow-lg max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-red-500 mb-4">
+            {error.includes("not found") ? "Destination Not Found" : "Error"}
+          </h2>
+          <p className="text-gray-600 mb-6">
+            {error.includes("not found") 
+              ? `We couldn't find information for ${stateSlug}. Please check the URL or explore our other destinations.`
+              : error}
+          </p>
+          <button className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-6 rounded-full transition-all">
+            Explore Destinations
+          </button>
         </div>
       </div>
     );
@@ -180,6 +216,9 @@ const FirstView = () => {
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1 }}
+          onError={(e) => {
+            e.target.src = '/assets/images/default-destination.jpg';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
         <div className="container mx-auto px-4 h-full flex flex-col justify-end pb-16 relative z-10">
@@ -239,7 +278,7 @@ const FirstView = () => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Ideal For</h3>
-                <p className="font-semibold">Couples, Families, Solo</p>
+                <p className="font-semibold">{stateData.idealFor}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -332,8 +371,7 @@ const FirstView = () => {
                     Local Customs
                   </h4>
                   <p className="text-gray-700">
-                    Respect local traditions and dress modestly when visiting
-                    religious sites.
+                    {stateData.travelTips || "Respect local traditions and dress modestly when visiting religious sites."}
                   </p>
                 </div>
                 <div className="bg-yellow-50/50 p-4 rounded-lg border border-yellow-100">
@@ -375,6 +413,9 @@ const FirstView = () => {
                     src={`https://craftedvacays.grandeurnet.in/${city.image}`}
                     alt={city.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    onError={(e) => {
+                      e.target.src = '/assets/images/default-city.jpg';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                   <div className="absolute bottom-0 left-0 p-6 w-full">
@@ -382,7 +423,7 @@ const FirstView = () => {
                       {city.name}
                     </h3>
                     <p className="text-white/90 text-sm line-clamp-2">
-                      {city.description}
+                      {city.short_description || city.description}
                     </p>
                     <button
                       className="mt-3 flex items-center text-white font-medium text-sm group-hover:text-primary transition-colors"
@@ -419,13 +460,16 @@ const FirstView = () => {
                 src={`https://craftedvacays.grandeurnet.in/${selectedCity.image}`}
                 alt={selectedCity.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = '/assets/images/default-city.jpg';
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
               <div className="absolute bottom-0 left-0 p-6 w-full">
                 <h2 className="text-3xl font-bold text-white">
                   {selectedCity.name}
                 </h2>
-                <p className="text-white/90">{selectedCity.description}</p>
+                <p className="text-white/90">{selectedCity.short_description || selectedCity.description}</p>
               </div>
             </div>
 
@@ -466,6 +510,9 @@ const FirstView = () => {
                       </h4>
                       <p className="text-gray-700">
                         {selectedCity.name}, {stateData.name}
+                        {stateData.type === "city" && stateData.parentState && (
+                          <>, {stateData.parentState}</>
+                        )}
                       </p>
                     </div>
                     <div className="bg-gray-50 p-4 rounded-lg">
@@ -474,7 +521,7 @@ const FirstView = () => {
                         Best Time to Visit
                       </h4>
                       <p className="text-gray-700">
-                        {selectedCity.bestTimeToVisit ||
+                        {selectedCity.best_time_to_visit ||
                           stateData.bestTimeToVisit ||
                           "Year-round"}
                       </p>
@@ -485,7 +532,7 @@ const FirstView = () => {
                         Ideal Duration
                       </h4>
                       <p className="text-gray-700">
-                        {selectedCity.idealDuration ||
+                        {selectedCity.ideal_duration ||
                           stateData.idealDuration ||
                           "2-3 days"}
                       </p>

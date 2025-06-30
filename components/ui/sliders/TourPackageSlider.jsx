@@ -98,7 +98,7 @@ const durationNightsMatch = !filters.duration_nights ||
                       title: pkg.title,
                       location: `${pkg.city_name}, ${pkg.state_name}`,
                       country_name: ` ${pkg.country_name}`,
-                      tourType: pkg.tourType || "Explore",
+                      tourType: pkg.tour_type || "Explore",
                       duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
                       itinerary: pkg.itinerary?.slice(0, 50) + "...",
                       rating: 4,

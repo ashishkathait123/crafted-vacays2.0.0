@@ -1,38 +1,24 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
-const ItineraryAccordion = ({ itineraryString }) => {
+const ItineraryAccordion = ({ tour_plan }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const toggleAccordion = (index) => {
     setActiveIndex((prev) => (prev === index ? -1 : index));
   };
 
-  // 🔥 Convert "Day 1: Explore..." into [{title, description}]
-  const itineraryData = useMemo(() => {
-    if (!itineraryString) return [];
-
-    return itineraryString
-      .split('|')
-      .map((entry) => entry.trim())
-      .filter(Boolean)
-      .map((entry, index) => {
-        const match = entry.match(/^Day\s*\d*:?(.+)/i);
-        const title = match ? match[1].trim() : `Day ${index + 1}`;
-        return {
-          title,
-          description: entry,
-          image: '', // Optional: You can enhance to attach day-wise image later
-        };
-      });
-  }, [itineraryString]);
+  if (!Array.isArray(tour_plan) || tour_plan.length === 0) {
+    return <p className="text-gray-500">No tour plan available.</p>;
+  }
 
   return (
     <div className="mt-6">
       <h2 className="text-2xl font-bold mb-4">Tour Plans</h2>
-      {itineraryData.map((day, index) => {
+      {tour_plan.map((day, index) => {
         const isOpen = index === activeIndex;
+
         return (
           <div
             key={index}
@@ -60,10 +46,10 @@ const ItineraryAccordion = ({ itineraryString }) => {
                     isOpen ? 'text-white' : 'text-gray-900 dark:text-white'
                   }`}
                 >
-                  {day.title}
+                  {day.heading}
                 </span>
               </div>
-              <button className="text-white dark:text-white">
+              <button className={`${isOpen ? 'text-white' : 'text-gray-500'}`}>
                 {isOpen ? <FaChevronUp /> : <FaChevronDown />}
               </button>
             </div>
@@ -71,7 +57,18 @@ const ItineraryAccordion = ({ itineraryString }) => {
             {/* Content */}
             {isOpen && (
               <div className="bg-white dark:bg-gray-900 px-4 py-4 border-t border-green-500">
-                <p className="text-gray-700 dark:text-gray-300">{day.description}</p>
+                <div className="flex flex-col md:flex-row gap-4 items-start">
+                  <p className="text-gray-700 dark:text-gray-300 flex-1">
+                    {day.description}
+                  </p>
+                  {day.image && (
+                    <img
+                      src={day.image}
+                      alt={day.heading}
+                      className="w-full md:w-60 h-auto rounded-md shadow-md object-cover"
+                    />
+                  )}
+                </div>
               </div>
             )}
           </div>

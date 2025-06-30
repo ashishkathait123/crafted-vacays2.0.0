@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -12,7 +12,6 @@ import {
   Card,
   CardContent,
   IconButton,
-  
   Divider,
 } from "@mui/material";
 import Calendar from "react-calendar";
@@ -57,8 +56,6 @@ const TourDetailsPage = () => {
   const [wishlisted, setWishlisted] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
 
-
-  
   useEffect(() => {
     fetch("https://craftedvacays.grandeurnet.in/get-tours.php")
       .then((res) => res.json())
@@ -92,44 +89,48 @@ const TourDetailsPage = () => {
     title,
     city_name,
     state_name,
+    country_name,
     duration_nights,
     duration_days,
     price,
+    price_adult,
+    price_youth,
+    price_child,
+    premium_guide,
+    premium_guide_price,
+    photo_package,
+    photo_package_price,
+    flight_included,
+    tour_type,
+    amenities = [],
     full_description,
     itinerary,
+    tour_plan = [],
+    travel_prep = [],
     inclusions = [],
     exclusions = [],
+    notes,
     images = [],
+    availability_from,
+    availability_to,
+    status
   } = tourData;
 
-  const amenities = [
-    { icon: FaHotel, label: "Luxury Stays" },
-    { icon: FaPlane, label: "Airport Transfers" },
-    { icon: FaWifi, label: "Free Wi-Fi" },
-    { icon: FaUtensils, label: "Gourmet Meals" },
-    { icon: FaCarAlt, label: "Private Transport" },
-    { icon: FaStar, label: "Travel Insurance" },
-  ];
+  // Generate available dates between availability_from and availability_to
+  const generateAvailableDates = () => {
+    if (!availability_from || !availability_to) return [];
+    const start = new Date(availability_from);
+    const end = new Date(availability_to);
+    const dates = [];
+    
+    for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+      dates.push(new Date(dt).toISOString().split('T')[0]);
+    }
+    
+    return dates;
+  };
 
-  const renderList = (items, isIncluded = true) =>
-    items
-      .filter((item) => item && item.trim())
-      .map((item, index) => (
-        <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-          {isIncluded ? <FaCheck color="green" /> : <FaTimes color="red" />}
-          <Typography variant="body2">{item}</Typography>
-        </Box>
-      ));
-
-  const mapQuery = encodeURIComponent(`${city_name}, ${state_name}`);
-  const availableDates = [
-    "2025-06-15",
-    "2025-06-18",
-    "2025-06-25",
-    "2025-07-02",
-    "2025-07-10",
-  ];
-
+  const availableDates = generateAvailableDates();
   const isDateAvailable = (date) => {
     const dateStr = date.toISOString().split("T")[0];
     return availableDates.includes(dateStr);
@@ -153,6 +154,18 @@ const TourDetailsPage = () => {
   const highlightImages = Array.isArray(images) && images.length > 0 
     ? images.slice(0, 4) 
     : Array(4).fill('/images/default-tour.jpg');
+
+  const renderList = (items, isIncluded = true) =>
+    items
+      .filter((item) => item && item.trim())
+      .map((item, index) => (
+        <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+          {isIncluded ? <FaCheck color="green" /> : <FaTimes color="red" />}
+          <Typography variant="body2">{item}</Typography>
+        </Box>
+      ));
+
+  const mapQuery = encodeURIComponent(`${city_name}, ${state_name}, ${country_name}`);
 
   return (
     <div className="relative overflow-x-hidden py-8 bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 min-h-screen mt-24">
@@ -215,8 +228,14 @@ const TourDetailsPage = () => {
             
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }}>
               <Typography variant="body1" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <FaMapMarkerAlt /> {city_name}, {state_name}
+                <FaMapMarkerAlt /> {city_name}, {state_name}, {country_name}
               </Typography>
+              <Chip 
+                label={tour_type} 
+                color="primary" 
+                size="small" 
+                sx={{ color: 'white', fontWeight: 'bold' }}
+              />
             </Box>
           </Box>
 
@@ -240,6 +259,14 @@ const TourDetailsPage = () => {
             <Typography variant="caption" color="text.secondary">
               per person
             </Typography>
+            {flight_included && (
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                <FaPlane size={14} color="#FF7B00" />
+                <Typography variant="caption" sx={{ ml: 0.5, color: '#FF7B00' }}>
+                  Flight Included
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
 
@@ -256,7 +283,7 @@ const TourDetailsPage = () => {
         }}>
           <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'primary.light' }}>
             <GiSandsOfTime size={24} />
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{duration_days} Days</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{duration_days} Days / {duration_nights} Nights</Typography>
             <Typography variant="caption">Adventure-filled itinerary</Typography>
           </Card>
           
@@ -268,8 +295,10 @@ const TourDetailsPage = () => {
           
           <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'warning.light' }}>
             <FaCalendarAlt size={24} />
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Flexible Dates</Typography>
-            <Typography variant="caption">Multiple departures</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+              {new Date(availability_from).toLocaleDateString()} - {new Date(availability_to).toLocaleDateString()}
+            </Typography>
+            <Typography variant="caption">Availability</Typography>
           </Card>
           
           <Card sx={{ p: 2, textAlign: 'center', bgcolor: 'success.light' }}>
@@ -336,20 +365,35 @@ const TourDetailsPage = () => {
             </Box>
 
             {/* Amenities */}
-            <Box>
-              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                🏆 Premium Amenities
-              </Typography>
-              <Grid container spacing={2}>
-                {amenities.map((item, idx) => (
-                  <Grid item xs={6} sm={4} key={idx}>
-                    <Card sx={{ p: 2, height: '100%' }}>
-                      <IconLabel icon={item.icon} label={item.label} center />
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
+            {amenities.length > 0 && (
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  🏆 Premium Amenities
+                </Typography>
+                <Grid container spacing={2}>
+                  {amenities.map((item, idx) => {
+                    const amenityIcons = {
+                      "Luxury Stays": FaHotel,
+                      "Airport Transfers": FaPlane,
+                      "Free Wi-Fi": FaWifi,
+                      "Gourmet Meals": FaUtensils,
+                      "Private Transport": FaCarAlt,
+                      "Travel Insurance": FaStar
+                    };
+                    
+                    const IconComponent = amenityIcons[item] || FaCheck;
+                    
+                    return (
+                      <Grid item xs={6} sm={4} key={idx}>
+                        <Card sx={{ p: 2, height: '100%' }}>
+                          <IconLabel icon={IconComponent} label={item} center />
+                        </Card>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </Box>
+            )}
 
             {/* Included / Excluded */}
             <Box>
@@ -368,12 +412,46 @@ const TourDetailsPage = () => {
             </Box>
 
             {/* Itinerary */}
+            {tour_plan.length > 0 && (
+              <Box>
+                <ItineraryAccordion tour_plan={tour_plan} />
+              </Box>
+            )}
+
+            {/* Travel Preparation */}
+            {travel_prep.length > 0 && (
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  🧳 Travel Preparation
+                </Typography>
+                {travel_prep.map((item, index) => (
+                  <Box key={index} sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      {item.heading}
+                    </Typography>
+                    <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                      {item.description}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            {/* Additional Notes */}
+            {notes && (
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                  ℹ️ Additional Notes
+                </Typography>
+                <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+                  {notes}
+                </Typography>
+              </Box>
+            )}
+
             <Box>
-              <ItineraryAccordion itineraryString={tourData?.itinerary} />
+              <CommentSection />
             </Box>
-            <Box>
- <CommentSection />
-             </Box>
           </Box>
          
           {/* Right Sidebar */}
@@ -400,11 +478,16 @@ const TourDetailsPage = () => {
                   From ₹{price}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  Duration {duration_days} days
+                  Duration: {duration_days} days / {duration_nights} nights
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Tour Type Adventure
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Tour Type: {tour_type}
                 </Typography>
+                {flight_included && (
+                  <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <FaPlane size={14} /> Flight included
+                  </Typography>
+                )}
               </Box>
 
               <Divider sx={{ my: 2 }} />
@@ -440,7 +523,7 @@ const TourDetailsPage = () => {
                 }
               />
               <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
-                * Popular dates sell out fast!
+                Available from {new Date(availability_from).toLocaleDateString()} to {new Date(availability_to).toLocaleDateString()}
               </Typography>
             </Card>
 
@@ -454,26 +537,23 @@ const TourDetailsPage = () => {
                 Book Your Adventure
               </Typography>
               <BookingForm
-                basePrice={price}
-                tourTitle={title}
-                availableDates={availableDates}
-                isDateAvailable={isDateAvailable}
-              />
+  basePrice={price}
+  tourTitle={title}
+  adultPrice={price_adult}
+  youthPrice={price_youth}
+  childPrice={price_child}
+  hasPhotoPackage={photo_package}
+  photoPackagePrice={photo_package_price}
+/>
+
             </Card>
           </Box>
         </Box>
         
-
- {/* Related Tours */}
+        {/* Related Tours */}
         <Box sx={{ mt: 6 }}>
-          {/* <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4, textAlign: 'center' }}>
-            More Amazing Tours in {city_name}
-          </Typography> */}
           <CityTourPackageSlider city={city_name} state={state_name} excludeSlug={slug} />
         </Box>
-       
-
-       
       </Box>
     </div>
   );
