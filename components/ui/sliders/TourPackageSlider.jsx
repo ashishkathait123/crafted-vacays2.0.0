@@ -40,7 +40,8 @@ const durationNightsMatch = !filters.duration_nights ||
     const country_nameMatch = !filters.country_name ||
       pkg.country_name?.toLowerCase().includes(filters.country_name.toLowerCase());
     const tourTypeMatch = !filters.tourType ||
-      pkg.tourType?.toLowerCase().includes(filters.tourType.toLowerCase());
+  pkg.tour_type?.toLowerCase().includes(filters.tourType.toLowerCase());
+
     const guestMatch = !filters.guests || parseInt(filters.guests) === 2;
 
     const numericPrice = parseFloat(pkg.price?.toString().replace(/[^\d.]/g, '')) || 0;

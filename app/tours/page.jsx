@@ -4,7 +4,7 @@ import {
   Box,
   Grid,
   FormControl,
-   InputLabel,
+  InputLabel,
   Select,
   MenuItem,
   Typography,
@@ -45,6 +45,7 @@ const allDestinations = [
   // Europe (example regions/cities)
   "Paris", "Rome", "Barcelona", "Zurich"
 ];
+
 // === STYLES ===
 const StyledTourCard = styled(Paper)(({ theme }) => ({
   display: 'flex',
@@ -296,50 +297,50 @@ const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
       <Divider sx={{ my: 2 }} />
 
       {/* Destination */}
-      <Box mb={3} >
-  <Typography fontWeight="bold" mb={1} color="primary">
-    Destination
-  </Typography>
-  <FormControl fullWidth size="small">
-    <InputLabel>Choose Destinations</InputLabel>
-   <Select
-  multiple
-  label="Choose Destinations"
-  value={filters?.destination ?? []}
-  onChange={(e) => {
-    const { value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      destination: typeof value === 'string' ? value.split(',') : value
-    }));
-  }}
-  renderValue={(selected) => selected.join(", ")}
-  MenuProps={{
-    disablePortal: true, // Important
-    PaperProps: {
-      sx: {
-        maxHeight: 300,
-        mt: 1,
-        zIndex: 1300, // Ensure it's above other elements
-      },
-    },
-  }}
->
-  {allDestinations.map((region) => (
-    <MenuItem key={region} value={region}>
-      <Checkbox
-        size="small"
-        checked={(filters?.destination ?? []).includes(region)}
-      />
-      <Typography variant="body2" ml={1}>
-        {region}
-      </Typography>
-    </MenuItem>
-  ))}
-</Select>
+      <Box mb={3}>
+        <Typography fontWeight="bold" mb={1} color="primary">
+          Destination
+        </Typography>
+        <FormControl fullWidth size="small">
+          <InputLabel>Choose Destinations</InputLabel>
+          <Select
+            multiple
+            label="Choose Destinations"
+            value={filters?.destination ?? []}
+            onChange={(e) => {
+              const { value } = e.target;
+              setFilters((prev) => ({
+                ...prev,
+                destination: typeof value === 'string' ? value.split(',') : value
+              }));
+            }}
+            renderValue={(selected) => selected.join(", ")}
+            MenuProps={{
+              disablePortal: true,
+              PaperProps: {
+                sx: {
+                  maxHeight: 300,
+                  mt: 1,
+                  zIndex: 1300,
+                },
+              },
+            }}
+          >
+            {allDestinations.map((region) => (
+              <MenuItem key={region} value={region}>
+                <Checkbox
+                  size="small"
+                  checked={(filters?.destination ?? []).includes(region)}
+                />
+                <Typography variant="body2" ml={1}>
+                  {region}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
 
-  </FormControl>
-</Box>
       <Divider sx={{ my: 2 }} />
 
       {/* Duration */}
@@ -387,11 +388,20 @@ const TourCard = ({ tour }) => {
         />
       </TourImage>
       <Box sx={{ p: 3, flex: 1, position: 'relative' }}>
-        <Box display="flex" alignItems="center" mb={0.5}>
-          <PlaceIcon fontSize="small" color="primary" />
-          <Typography variant="body2" color="primary" fontWeight="medium" ml={0.5}>
-            {tour.location}
-          </Typography>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
+          <Box display="flex" alignItems="center">
+            <PlaceIcon fontSize="small" color="primary" />
+            <Typography variant="body2" color="primary" fontWeight="medium" ml={0.5}>
+              {tour.location}
+            </Typography>
+          </Box>
+          <Chip 
+            label={tour.type} 
+            size="small" 
+            color="secondary" 
+            variant="outlined"
+            sx={{ fontWeight: 'bold', fontSize: '0.7rem' }}
+          />
         </Box>
         
         <Typography variant="h5" fontWeight="bold" sx={{ mt: 0.5, mb: 1.5 }}>
@@ -477,13 +487,13 @@ const TourCard = ({ tour }) => {
 const ToursPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
- const [filters, setFilters] = useState({
-  type: [],
-  price: [2000, 50000],
-  rating: [],
-  destination: [],
-  duration: []
-});
+  const [filters, setFilters] = useState({
+    type: [],
+    price: [2000, 50000],
+    rating: [],
+    destination: [],
+    duration: []
+  });
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -512,12 +522,10 @@ const ToursPage = () => {
           rating: parseFloat(item.rating || 4.0),
           duration: `${item.duration_days || 1} Day${item.duration_days > 1 ? 's' : ''}${item.duration_nights ? ` / ${item.duration_nights} Night${item.duration_nights > 1 ? 's' : ''}` : ''}`,
           tags: [item.special, item.cancellation].filter(Boolean),
-          type: item.type || "General",
+          type: item.tour_type || "General",
         }));
 
-        // Sort by rating (highest first)
         formatted.sort((a, b) => b.rating - a.rating);
-        
         setTours(formatted);
       } catch (err) {
         console.error("Failed to fetch tours", err);
@@ -530,39 +538,43 @@ const ToursPage = () => {
     fetchTours();
   }, []);
 
- const filteredTours = tours.filter((tour) => {
-  // Type filter
-  const matchesType = filters.type.length === 0 || 
-    filters.type.some(type => tour.type.includes(type.split(' ')[0]));
-  
-  // Price filter
-  const matchesPrice = tour.price >= filters.price[0] && 
-    tour.price <= filters.price[1];
-  
-  // Rating filter
-  const matchesRating = filters.rating.length === 0 || 
-    filters.rating.includes(Math.floor(tour.rating));
-  
-  // Destination filter
-  const matchesDestination = filters.destination?.length === 0 || 
-    (filters.destination && tour.location.includes(filters.destination[0]));
-  
-  // Duration filter - this needs to parse the duration string
-  const matchesDuration = filters.duration?.length === 0 || 
-    (filters.duration && filters.duration.some(dur => {
-      const daysMatch = tour.duration.match(/(\d+) Day/);
-      if (!daysMatch) return false;
-      const days = parseInt(daysMatch[1]);
-      
-      if (dur === "1-3 Days") return days >= 1 && days <= 3;
-      if (dur === "4-7 Days") return days >= 4 && days <= 7;
-      if (dur === "8-14 Days") return days >= 8 && days <= 14;
-      if (dur === "15+ Days") return days >= 15;
-      return false;
-    }));
-  
-  return matchesType && matchesPrice && matchesRating && matchesDestination && matchesDuration;
-});
+  const filteredTours = tours.filter((tour) => {
+    // Type filter
+    const matchesType = filters.type.length === 0 || 
+      filters.type.some(selectedType => 
+        tour.type.toLowerCase().includes(selectedType.toLowerCase().split(' ')[0])
+      );
+    
+    // Price filter
+    const matchesPrice = tour.price >= filters.price[0] && 
+      tour.price <= filters.price[1];
+    
+    // Rating filter
+    const matchesRating = filters.rating.length === 0 || 
+      filters.rating.some(selectedRating => Math.floor(tour.rating) === selectedRating);
+    
+    // Destination filter
+    const matchesDestination = filters.destination.length === 0 || 
+      filters.destination.some(selectedDest => 
+        tour.location.toLowerCase().includes(selectedDest.toLowerCase())
+      );
+    
+    // Duration filter
+    const matchesDuration = filters.duration.length === 0 || 
+      filters.duration.some(dur => {
+        const daysMatch = tour.duration.match(/(\d+) Day/);
+        if (!daysMatch) return false;
+        const days = parseInt(daysMatch[1]);
+        
+        if (dur === "1-3 Days") return days >= 1 && days <= 3;
+        if (dur === "4-7 Days") return days >= 4 && days <= 7;
+        if (dur === "8-14 Days") return days >= 8 && days <= 14;
+        if (dur === "15+ Days") return days >= 15;
+        return false;
+      });
+    
+    return matchesType && matchesPrice && matchesRating && matchesDestination && matchesDuration;
+  });
 
   return (
     <Box sx={{ 
@@ -570,7 +582,7 @@ const ToursPage = () => {
       color: 'text.primary', 
       minHeight: '100vh',
       backgroundImage: 'linear-gradient(to bottom, #f9f9ff, #ffffff)',
-    marginTop: isMobile ? '75px' : 0,
+      marginTop: isMobile ? '75px' : 0,
     }}>
       <Container maxWidth="xl" sx={{ py: 6 }}>
         <Box sx={{ mb: 6, textAlign: 'center' }}>
@@ -650,7 +662,13 @@ const ToursPage = () => {
                 <Button 
                   variant="contained"
                   size="large"
-                  onClick={() => setFilters({ type: [], price: [2000, 50000], rating: [] })}
+                  onClick={() => setFilters({ 
+                    type: [], 
+                    price: [2000, 50000], 
+                    rating: [], 
+                    destination: [], 
+                    duration: [] 
+                  })}
                   sx={{
                     backgroundColor: '#FF6600',
                     color: '#fff',

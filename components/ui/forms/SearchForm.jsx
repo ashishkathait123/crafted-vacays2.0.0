@@ -87,12 +87,13 @@ export default function SearchForm({ filters, onFilterChange }) {
             value={localFilters.tourType}
             onChange={handleChange("tourType")}
           >
-            <option value="">Tour Type</option>
-            <option value="Adventure">Adventure</option>
-            <option value="Beach">Beach</option>
-            <option value="Cultural">Cultural</option>
-            <option value="Mountain">Mountain</option>
-            <option value="Wildlife">Wildlife</option>
+             <option value="">Tour Type</option>
+  <option value="Nature Escapes">Nature Escapes</option>
+  <option value="Adventure Thrills">Adventure Thrills</option>
+  <option value="Cultural Journeys">Cultural Journeys</option>
+  <option value="Foodie Trails">Foodie Trails</option>
+  <option value="City Explorations">City Explorations</option>
+  <option value="Luxury Cruises">Luxury Cruises</option>
           </select>
         </div>
 
