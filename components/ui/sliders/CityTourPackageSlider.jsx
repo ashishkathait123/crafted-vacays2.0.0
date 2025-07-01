@@ -57,7 +57,7 @@ const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
   };
 
   return (
-    <Container sx={{ mt: 10, position: "relative", py: 4, background: 'linear-gradient(to bottom, #f8f9fa, white)' }}>
+    <Container sx={{ mt: 11, position: "relative", py: 4, background: 'linear-gradient(to bottom, #f8f9fa, white)' }}>
       <Box textAlign="center" mb={6}>
         <h2 className="text-4xl font-bold mb-3 text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">
           ✨ Must-Do Experiences in {city} ✨
@@ -80,7 +80,7 @@ const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
         navigation
         autoplay={{ delay: 3500, disableOnInteraction: false }}
         scrollbar={{ draggable: true }}
-        style={{ padding: '20px 10px' }}
+        style={{ padding: '22px 10px' }}
       >
         {packages.map((pkg) => {
           const priceINR = parseFloat(pkg.price) || 0;
@@ -94,29 +94,28 @@ const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
                 <IconButton sx={{ color: '#e1306c' }} onClick={() => window.open('https://instagram.com')}>
                   <InstagramIcon />
                 </IconButton>
-              </SocialShare>
+            </SocialShare>
 
-              <TourPackageCard
-                packageData={{
-                  title: pkg.title,
-                  location: `${pkg.city_name}, ${pkg.state_name}`,
-                   country_name: ` ${pkg.country_name}`,
+<TourPackageCard
+  packageData={{
+    title: pkg.title,
+    location: `${pkg.city_name}, ${pkg.state_name}`,
+    tourType: pkg.tour_type || "Bucket List Experience",
+    duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
+    itinerary: pkg.itinerary?.slice(0, 50) + "...",
+    rating: 4,
+    originalPrice: priceINR * 1.2,
+    discountedPrice: priceINR,
+    flight_included: pkg.flight_included, // ✅ dynamic flight inclusion
+    images: pkg.images?.length
+      ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
+      : ["/images/bg/default.jpg"],
+    highlightBadge: "🔥 Trending Now",
+    instagramHint: "Tag #CraftedVacays for a feature!"
+  }}
+  onClick={() => router.push(`/tour-details/${pkg.slug}`)}
+/>
 
-                  tourType: pkg.tour_type || "Bucket List Experience",
-                  duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
-                  itinerary: pkg.itinerary?.slice(0, 50) + "...",
-                  rating: 4,
-                  guests: 2,
-                  originalPrice: priceINR * 1.2,
-                  discountedPrice: priceINR,
-                  images: pkg.images?.length
-                    ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
-                    : ["/images/bg/default.jpg"],
-                  highlightBadge: "🔥 Trending Now",
-                  instagramHint: "Tag #CraftedVacays for a feature!"
-                }}
-                onClick={() => router.push(`/tour-details/${pkg.slug}`)}
-              />
             </SwiperSlide>
           );
         })}

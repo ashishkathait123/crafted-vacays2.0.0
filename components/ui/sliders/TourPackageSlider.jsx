@@ -30,33 +30,27 @@ const TourPackage = ({ filters }) => {
   const filtered = packages.filter((pkg) => {
     const ratingMatch = !filters.rating?.length || filters.rating.includes(pkg.rating);
     const languageMatch = !filters.language?.length || filters.language.includes(pkg.language);
-    const durationDaysMatch = !filters.duration_days ||
-  pkg.duration_days?.toString() === filters.duration_days;
-
-const durationNightsMatch = !filters.duration_nights ||
-  pkg.duration_nights?.toString() === filters.duration_nights;
-    // const locationMatch = !filters.location ||
-    //   pkg.city_name?.toLowerCase().includes(filters.location.toLowerCase());
-    const country_nameMatch = !filters.country_name ||
-      pkg.country_name?.toLowerCase().includes(filters.country_name.toLowerCase());
-    const tourTypeMatch = !filters.tourType ||
-  pkg.tour_type?.toLowerCase().includes(filters.tourType.toLowerCase());
-
+    const durationDaysMatch = !filters.duration_days || pkg.duration_days?.toString() === filters.duration_days;
+    const durationNightsMatch = !filters.duration_nights || pkg.duration_nights?.toString() === filters.duration_nights;
+    const countryMatch = !filters.country_name || pkg.country_name?.toLowerCase().includes(filters.country_name.toLowerCase());
+    const tourTypeMatch = !filters.tourType || pkg.tour_type?.toLowerCase().includes(filters.tourType.toLowerCase());
     const guestMatch = !filters.guests || parseInt(filters.guests) === 2;
 
     const numericPrice = parseFloat(pkg.price?.toString().replace(/[^\d.]/g, '')) || 0;
     const minPriceMatch = !filters.minPrice || numericPrice >= parseFloat(filters.minPrice);
     const maxPriceMatch = !filters.maxPrice || numericPrice <= parseFloat(filters.maxPrice);
 
-    return  ratingMatch &&
-  languageMatch &&
-  country_nameMatch &&
-  tourTypeMatch &&
-  guestMatch &&
-  minPriceMatch &&
-  maxPriceMatch &&
-  durationDaysMatch &&
-  durationNightsMatch;
+    return (
+      ratingMatch &&
+      languageMatch &&
+      countryMatch &&
+      tourTypeMatch &&
+      guestMatch &&
+      minPriceMatch &&
+      maxPriceMatch &&
+      durationDaysMatch &&
+      durationNightsMatch
+    );
   });
 
   useEffect(() => {
@@ -92,13 +86,14 @@ const durationNightsMatch = !filters.duration_nights ||
           >
             {filtered.map((pkg) => {
               const priceINR = parseFloat(pkg.price) || 0;
+
               return (
                 <SwiperSlide key={pkg.id}>
                   <TourPackageCard
                     packageData={{
                       title: pkg.title,
                       location: `${pkg.city_name}, ${pkg.state_name}`,
-                      country_name: ` ${pkg.country_name}`,
+                      country_name: pkg.country_name,
                       tourType: pkg.tour_type || "Explore",
                       duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
                       itinerary: pkg.itinerary?.slice(0, 50) + "...",
@@ -106,9 +101,12 @@ const durationNightsMatch = !filters.duration_nights ||
                       guests: 2,
                       originalPrice: priceINR * 1.2,
                       discountedPrice: priceINR,
+flight_included: pkg.flight_included === "1" || pkg.flight_included === 1,
                       images: pkg.images?.length
                         ? [`https://craftedvacays.grandeurnet.in/${pkg.images[0]}`]
-                        : ["/images/bg/default.jpg"]
+                        : ["/images/bg/default.jpg"],
+                      highlightBadge: "🔥 Trending Now",
+                      instagramHint: "Tag #CraftedVacays for a feature!",
                     }}
                     onClick={() => router.push(`/tour-details/${pkg.slug}`)}
                   />

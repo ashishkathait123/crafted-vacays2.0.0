@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import HotelIcon from "@mui/icons-material/Hotel";
 import { useCurrency } from "@/context/CurrencyContext";
-import { FaLocationDot, FaUser, FaClock, FaTag } from "react-icons/fa6";
+import { FaLocationDot, FaUser, FaClock, FaTag, FaPlane } from "react-icons/fa6";
 
 const TourPackageCard = ({ packageData, onClick }) => {
   const { convertPrice, currencySymbol } = useCurrency();
@@ -44,16 +44,10 @@ const TourPackageCard = ({ packageData, onClick }) => {
     setImageErrorFlags(updatedFlags);
   };
 
-  const parsePrice = (price) => {
-    const numericPrice = parseFloat(price.replace(/[^0-9.-]+/g, ""));
-    return isNaN(numericPrice) ? 0 : numericPrice;
-  };
-
   const safePrice = (price) => (isNaN(price) || price <= 0 ? 0 : price);
 
- const originalPriceNum = packageData.originalPrice ?? 0;
-const discountedPriceNum = packageData.discountedPrice ?? 0;
-
+  const originalPriceNum = packageData.originalPrice ?? 0;
+  const discountedPriceNum = packageData.discountedPrice ?? 0;
 
   const calculatePrice = () => {
     let basePrice = safePrice(discountedPriceNum);
@@ -152,13 +146,7 @@ const discountedPriceNum = packageData.discountedPrice ?? 0;
           <FaLocationDot /> {packageData.location}
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
-          <FaLocationDot /> {packageData.country_name}
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
           🧭 {packageData.tourType}
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 1 }}>
-          <FaUser /> {packageData.guests}
         </Typography>
         <Typography variant="body2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <FaClock /> {packageData.duration}
@@ -167,9 +155,6 @@ const discountedPriceNum = packageData.discountedPrice ?? 0;
 
       {/* Itinerary + Hotel Selector */}
       <Box sx={{ position: "relative", zIndex: 2, textAlign: "center", mb: 2 }}>
-        <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-          {packageData.itinerary || "No itinerary available"}
-        </Typography>
         <Typography variant="body1" sx={{ mt: 1, fontWeight: "bold" }}>
           Hotel Type
         </Typography>
@@ -199,17 +184,24 @@ const discountedPriceNum = packageData.discountedPrice ?? 0;
       </Box>
 
       {/* Pricing */}
-      <Box sx={{ position: "relative", zIndex: 2, textAlign: "center", mb: 2 }}>
+      <Box sx={{ position: "relative", zIndex: 2, textAlign: "center" }}>
         <Typography variant="body2" sx={{ textDecoration: "line-through", opacity: 0.7 }}>
-  {currencySymbol} {convertPrice(originalPriceNum).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-</Typography>
-<Typography variant="h6" sx={{ fontWeight: "bold" }}>
-  {currencySymbol} {calculatePrice().toLocaleString(undefined, { minimumFractionDigits: 2 })}
-</Typography>
-
-        <Typography variant="caption" sx={{ opacity: 0.8 }}>
-          Approx Price without flights
+          {currencySymbol} {convertPrice(originalPriceNum).toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </Typography>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          {currencySymbol} {calculatePrice().toLocaleString(undefined, { minimumFractionDigits: 2 })}
+        </Typography>
+
+        {/* Flight Dynamic Caption */}
+        {packageData.flight_included ? (
+          <Typography variant="caption" sx={{ color: "#00c853", fontWeight: "bold" }}>
+            ✈️ Flight Included
+          </Typography>
+        ) : (
+          <Typography variant="caption" sx={{ opacity: 0.8 }}>
+            Approx Price without flights
+          </Typography>
+        )}
       </Box>
 
       {/* CTA */}

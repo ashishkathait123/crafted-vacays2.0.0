@@ -100,7 +100,7 @@ const TourDetailsPage = () => {
     premium_guide_price,
     photo_package,
     photo_package_price,
-    flight_included,
+flight_included: raw_flight_included,
     tour_type,
     amenities = [],
     full_description,
@@ -115,6 +115,7 @@ const TourDetailsPage = () => {
     availability_to,
     status
   } = tourData;
+const flight_included = raw_flight_included === "1" || raw_flight_included === 1;
 
   // Generate available dates between availability_from and availability_to
   const generateAvailableDates = () => {
@@ -396,20 +397,27 @@ const TourDetailsPage = () => {
             )}
 
             {/* Included / Excluded */}
-            <Box>
-              <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                ✅ What's Included
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  {renderList(inclusions, true)}
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>❌ Not Included</Typography>
-                  {renderList(exclusions, false)}
-                </Grid>
-              </Grid>
-            </Box>
+          <Box>
+  <Grid container spacing={3}>
+    <Grid item xs={12} md={6}>
+      <Box>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+          ✅ What's Included
+        </Typography>
+        {renderList(inclusions, true)}
+      </Box>
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <Box>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+          ❌ Not Included
+        </Typography>
+        {renderList(exclusions, false)}
+      </Box>
+    </Grid>
+  </Grid>
+</Box>
+
 
             {/* Itinerary */}
             {tour_plan.length > 0 && (
@@ -518,7 +526,7 @@ const TourDetailsPage = () => {
                 }
                 tileContent={({ date, view }) =>
                   view === "month" && isDateAvailable(date) ? (
-                    <div style={{ marginTop: 2, color: "green", fontSize: 12 }}>Available</div>
+                    <div style={{ marginTop: 2, color: "green", fontSize: 12 }}>Avail..</div>
                   ) : null
                 }
               />
