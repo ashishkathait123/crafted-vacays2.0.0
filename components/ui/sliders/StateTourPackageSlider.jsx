@@ -5,7 +5,6 @@ import { Container } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Scrollbar } from "swiper/modules";
 import { useRouter } from "next/navigation";
-import { useCurrency } from "@/context/CurrencyContext";
 import TourPackageCard from "../cards/TourCard";
 
 import "swiper/css";
@@ -23,11 +22,22 @@ const StateTourPackageSlider = ({ state, excludeSlug }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.tours) {
-          const filtered = data.tours.filter(
-            (pkg) =>
-              pkg.state_name?.toLowerCase() === state?.toLowerCase() &&
+          const filtered = data.tours.filter((pkg) => {
+            const normalizedStateName = pkg.state_name
+              ?.toLowerCase()
+              .replaceAll("-", " ")
+              .trim();
+            const normalizedStateParam = state
+              ?.toLowerCase()
+              .replaceAll("-", " ")
+              .trim();
+
+            return (
+              normalizedStateName === normalizedStateParam &&
               pkg.slug !== excludeSlug
-          );
+            );
+          });
+
           setPackages(filtered);
         }
       })
@@ -39,7 +49,7 @@ const StateTourPackageSlider = ({ state, excludeSlug }) => {
   return (
     <Container sx={{ mt: 6, position: "relative" }}>
       <h2 className="text-3xl font-bold text-center mb-6 text-primary">
-        More Tours in {state}
+        More Tours in {state.replaceAll("-", " ")}
       </h2>
 
       <Swiper
@@ -64,7 +74,7 @@ const StateTourPackageSlider = ({ state, excludeSlug }) => {
                 packageData={{
                   title: pkg.title,
                   location: `${pkg.city_name}, ${pkg.state_name}`,
-                   tourType: pkg.tour_type || "Explore",
+                  tourType: pkg.tour_type || "Explore",
                   duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
                   itinerary: pkg.itinerary?.slice(0, 50) + "...",
                   rating: 4,

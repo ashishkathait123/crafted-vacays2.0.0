@@ -52,30 +52,34 @@ const DestinationDetails = ({ parentName }) => {
     }
   };
 
-  const fetchRelatedTours = async () => {
-    try {
-      const res = await fetch('https://craftedvacays.grandeurnet.in/get-tours.php');
-      const data = await res.json();
+ const fetchRelatedTours = async () => {
+  try {
+    const res = await fetch('https://craftedvacays.grandeurnet.in/get-tours.php');
+    const data = await res.json();
 
-      const matchedCountry = data.destinations.find(
-        (dest) => dest.slug.toLowerCase() === parentName.toLowerCase()
-      );
+    const matchedCountry = data.destinations.find(
+      (dest) => dest.slug.toLowerCase() === parentName.toLowerCase()
+    );
 
-      if (!matchedCountry) {
-        setRelatedTours([]);
-        return;
-      }
-
-      const filteredTours = data.tours.filter(
-        (tour) => tour.country_id === matchedCountry.id
-      );
-
-      setRelatedTours(filteredTours);
-    } catch (err) {
-      console.error('Failed to load related tours:', err);
+    if (!matchedCountry) {
       setRelatedTours([]);
+      return;
     }
-  };
+
+    const filteredTours = data.tours.filter(
+      (tour) =>
+        tour.country &&
+        tour.country.toLowerCase().replace(/[\s-]/g, '') ===
+        matchedCountry.name.toLowerCase().replace(/[\s-]/g, '')
+    );
+
+    setRelatedTours(filteredTours);
+  } catch (err) {
+    console.error('Failed to load related tours:', err);
+    setRelatedTours([]);
+  }
+};
+
 
   const travelIcons = [Globe, Plane, Compass, Mountain, Landmark];
   const getRandomIcon = () => {

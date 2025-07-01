@@ -16,20 +16,21 @@ const CountryPackage = ({ countryFilter }) => {
   const { currencySymbol } = useCurrency();
   const router = useRouter();
 
-  useEffect(() => {
-    fetch("https://craftedvacays.grandeurnet.in/get-tours.php")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.tours) {
-          const filtered = data.tours.filter(
-            (pkg) =>
-              pkg.country_name?.toLowerCase() ===
-              countryFilter?.toLowerCase()
-          );
-          setPackages(filtered);
-        }
-      });
-  }, [countryFilter]);
+ useEffect(() => {
+  fetch("https://craftedvacays.grandeurnet.in/get-tours.php")
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success && data.tours) {
+        const filtered = data.tours.filter((pkg) =>
+          pkg.country_name &&
+          pkg.country_name.toLowerCase().replace(/[\s-]/g, '') ===
+          countryFilter?.toLowerCase().replace(/[\s-]/g, '')
+        );
+        setPackages(filtered);
+      }
+    });
+}, [countryFilter]);
+
 
   if (!packages.length) return null;
 
