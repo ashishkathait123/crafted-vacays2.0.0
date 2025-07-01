@@ -100,7 +100,7 @@ const CityTourPackageSlider = ({ city, state, excludeSlug }) => {
                 packageData={{
                   title: pkg.title,
                   location: `${pkg.city_name}, ${pkg.state_name}`,
-                  tourType: pkg.tourType || "Bucket List Experience",
+                  tourType: pkg.tour_type || "Bucket List Experience",
                   duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
                   itinerary: pkg.itinerary?.slice(0, 50) + "...",
                   rating: 4,

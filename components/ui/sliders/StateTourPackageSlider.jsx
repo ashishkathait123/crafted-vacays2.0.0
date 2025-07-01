@@ -64,7 +64,7 @@ const StateTourPackageSlider = ({ state, excludeSlug }) => {
                 packageData={{
                   title: pkg.title,
                   location: `${pkg.city_name}, ${pkg.state_name}`,
-                  tourType: pkg.tourType || "Explore",
+                   tourType: pkg.tour_type || "Explore",
                   duration: `${pkg.duration_nights}N/${pkg.duration_days}D`,
                   itinerary: pkg.itinerary?.slice(0, 50) + "...",
                   rating: 4,

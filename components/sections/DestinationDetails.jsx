@@ -40,7 +40,7 @@ const DestinationDetails = ({ parentName }) => {
       const data = await res.json();
 
       const matchedCountry = data.destinations.find(
-        (dest) => dest.name.toLowerCase() === parentName.toLowerCase()
+        (dest) => dest.slug.toLowerCase() === parentName.toLowerCase()
       );
 
       setStates(matchedCountry?.states || []);
@@ -56,9 +56,20 @@ const DestinationDetails = ({ parentName }) => {
     try {
       const res = await fetch('https://craftedvacays.grandeurnet.in/get-tours.php');
       const data = await res.json();
-      const filteredTours = data.tours.filter(
-        (tour) => tour.country?.toLowerCase() === parentName.toLowerCase()
+
+      const matchedCountry = data.destinations.find(
+        (dest) => dest.slug.toLowerCase() === parentName.toLowerCase()
       );
+
+      if (!matchedCountry) {
+        setRelatedTours([]);
+        return;
+      }
+
+      const filteredTours = data.tours.filter(
+        (tour) => tour.country_id === matchedCountry.id
+      );
+
       setRelatedTours(filteredTours);
     } catch (err) {
       console.error('Failed to load related tours:', err);
@@ -114,13 +125,11 @@ const DestinationDetails = ({ parentName }) => {
           variants={fadeInUp}
           className="py-12 px-4 md:px-16 text-center relative z-10 mt-10"
         >
-          <motion.h1
-            className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500"
-          >
-            Explore {parentName}
+          <motion.h1 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500">
+            Explore {parentName.replace(/-/g, ' ')}
           </motion.h1>
           <motion.p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Discover breathtaking destinations, hidden gems, and unforgettable adventures across {parentName}'s most beautiful states.
+            Discover breathtaking destinations, hidden gems, and unforgettable adventures across {parentName.replace(/-/g, ' ')}'s most beautiful states.
           </motion.p>
         </motion.div>
       </div>
@@ -203,36 +212,26 @@ const DestinationDetails = ({ parentName }) => {
         transition={{ duration: 0.8 }}
       >
         <h3 className="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">
-          Ready for Your {parentName} Adventure?
+          Ready for Your {parentName.replace(/-/g, ' ')} Adventure?
         </h3>
         <p className="text-lg mb-6 max-w-2xl mx-auto">
           Let us craft your perfect itinerary with exclusive deals and local insights!
         </p>
-         <button
-        onClick={() => setShowForm(true)}
-        className="px-8 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-white rounded-full font-semibold shadow-lg hover:shadow-yellow-400/30 transition-all"
-      >
-        Contact Our Travel Experts
-      </button>
-
-
-
-
-
-
-
+        <button
+          onClick={() => setShowForm(true)}
+          className="px-8 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-white rounded-full font-semibold shadow-lg hover:shadow-yellow-400/30 transition-all"
+        >
+          Contact Our Travel Experts
+        </button>
       </motion.div>
-    {showForm && (
-  <div className="fixed inset-0 z-[999999] flex items-center justify-center">
-    <div
-      className="w-full max-w-3xl max-h-[95vh] overflow-y-scroll scrollbar-hide p-4"
-    >
-      <ItineraryForm onClose={() => setShowForm(false)} />
-    </div>
-  </div>
-)}
 
-
+      {showForm && (
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="w-full max-w-3xl max-h-[95vh] overflow-y-scroll scrollbar-hide p-4">
+            <ItineraryForm onClose={() => setShowForm(false)} />
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };
