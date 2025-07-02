@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { FiSearch, FiMapPin, FiGlobe, FiMoon } from "react-icons/fi";
 
-export default function SearchForm({ filters, onFilterChange }) {
+export default function SearchForm({ filters, onFilterChange, availableStates = [] }) {
   const [localFilters, setLocalFilters] = useState({
-    destination: filters.country_name || "",
+    destination: filters.country_name || "", // still using country_name key for compatibility
     duration_nights: filters.duration_nights || "",
     tourType: filters.tourType || "",
   });
@@ -26,20 +26,20 @@ export default function SearchForm({ filters, onFilterChange }) {
 
   const handleSearch = () => {
     onFilterChange({
-      country_name: localFilters.destination,
+      country_name: localFilters.destination, // key kept as-is for backend compatibility
       duration_nights: localFilters.duration_nights,
       tourType: localFilters.tourType,
     });
   };
 
-  const nightOptions = Array.from({ length: 11 }, (_, i) => 
-    (i === 10 ? "10+" : `${i + 1}`)
+  const nightOptions = Array.from({ length: 11 }, (_, i) =>
+    i === 10 ? "10+" : `${i + 1}`
   );
 
   return (
     <div className="bg-white dark:bg-gray-950 rounded-xl shadow-2xl p-4 sm:p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Destination Dropdown */}
+        {/* Destination Dropdown (States) */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FiMapPin className="text-gray-400" />
@@ -50,11 +50,11 @@ export default function SearchForm({ filters, onFilterChange }) {
             onChange={handleChange("destination")}
           >
             <option value="">Select Country</option>
-            <option value="India">India</option>
-            <option value="Vietnam">Vietnam</option>
-            <option value="Indonesia">Indonesia</option>
-            <option value="Thailand">Thailand</option>
-            <option value="Sri Lanka">Sri Lanka</option>
+            {availableStates.map((state) => (
+              <option key={state.id} value={state.name}>
+                {state.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -77,7 +77,7 @@ export default function SearchForm({ filters, onFilterChange }) {
           </select>
         </div>
 
-        {/* Tour Type */}
+        {/* Tour Type Dropdown */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FiGlobe className="text-gray-400" />
@@ -87,13 +87,13 @@ export default function SearchForm({ filters, onFilterChange }) {
             value={localFilters.tourType}
             onChange={handleChange("tourType")}
           >
-             <option value="">Tour Type</option>
-  <option value="Nature Escapes">Nature Escapes</option>
-  <option value="Adventure Thrills">Adventure Thrills</option>
-  <option value="Cultural Journeys">Cultural Journeys</option>
-  <option value="Foodie Trails">Foodie Trails</option>
-  <option value="City Explorations">City Explorations</option>
-  <option value="Luxury Cruises">Luxury Cruises</option>
+            <option value="">Tour Type</option>
+            <option value="Nature Escapes">Nature Escapes</option>
+            <option value="Adventure Thrills">Adventure Thrills</option>
+            <option value="Cultural Journeys">Cultural Journeys</option>
+            <option value="Foodie Trails">Foodie Trails</option>
+            <option value="City Explorations">City Explorations</option>
+            <option value="Luxury Cruises">Luxury Cruises</option>
           </select>
         </div>
 

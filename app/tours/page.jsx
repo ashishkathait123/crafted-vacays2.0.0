@@ -30,23 +30,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { styled } from '@mui/material/styles';
 
-
-const allDestinations = [
-  // India
-  "Rajasthan", "Goa", "Kerala", "Ladakh", "Himachal Pradesh", "Uttarakhand",
-  // Nepal
-  "Kathmandu", "Pokhara",
-  // Bhutan
-  "Thimphu", "Paro",
-  // Indonesia
-  "Bali", "Jakarta", "Yogyakarta",
-  // Thailand
-  "Bangkok", "Phuket", "Chiang Mai",
-  // Europe (example regions/cities)
-  "Paris", "Rome", "Barcelona", "Zurich"
-];
-
-// === STYLES ===
+// === STYLED COMPONENTS ===
 const StyledTourCard = styled(Paper)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -109,7 +93,8 @@ const FilterButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen }) => {
+// === FILTERS SIDEBAR ===
+const FiltersSidebar = ({ filters, setFilters, mobileOpen, setMobileOpen, allDestinations }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -495,6 +480,7 @@ const ToursPage = () => {
     duration: []
   });
   const [tours, setTours] = useState([]);
+  const [allDestinations, setAllDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -525,6 +511,19 @@ const ToursPage = () => {
           type: item.tour_type || "General",
         }));
 
+        // Extract unique destinations from tours
+        const destinations = new Set();
+        formatted.forEach(tour => {
+          if (tour.location) {
+            const parts = tour.location.split(', ');
+            if (parts.length > 1) {
+              destinations.add(parts[1]); // Add state/country
+            }
+            destinations.add(parts[0]); // Add city
+          }
+        });
+        
+        setAllDestinations(Array.from(destinations).sort());
         formatted.sort((a, b) => b.rating - a.rating);
         setTours(formatted);
       } catch (err) {
@@ -622,6 +621,7 @@ const ToursPage = () => {
               setFilters={setFilters} 
               mobileOpen={mobileOpen}
               setMobileOpen={setMobileOpen}
+              allDestinations={allDestinations}
             />
           </Grid>
 
