@@ -6,22 +6,25 @@ const CommentSection = ({ slug }) => {
   const [comments, setComments] = useState([]);
   const [name, setName] = useState("");
   const [text, setText] = useState("");
+  const [location, setLocation] = useState("");
+  const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [rating, setRating] = useState(0);
-  const [location, setLocation] = useState("");
 
-  const API_URL = "http://localhost/craft"; // Adjust if needed
+  const API_URL = "http://localhost/craft"; // ✅ Update to your actual backend URL
 
+  // Fetch comments on load
   useEffect(() => {
-    if (!slug) return;
+    if (!slug) {
+      console.warn("⚠️ 'slug' is not provided to CommentSection.");
+      return;
+    }
     setLoading(true);
     axios
       .get(`${API_URL}/get-comments.php?slug=${slug}`)
       .then((res) => {
         if (res.data.success) {
           setComments(res.data.comments);
-          setError("");
         } else {
           setError(res.data.message || "Failed to fetch comments.");
         }
@@ -31,15 +34,37 @@ const CommentSection = ({ slug }) => {
   }, [slug]);
 
   const handleSubmit = async () => {
-    if (!name || !text) return;
+    const trimmedName = name.trim();
+    const trimmedText = text.trim();
+    const trimmedSlug = slug?.trim();
+    const cleanedRating = parseInt(rating, 10);
 
- const newComment = {
-  traveler_name: name,
-  hometown: location,
-  rating: rating,
-  travel_story: text,
-  slug: slug   
-};
+    console.log("DEBUG — Rating value is:", cleanedRating);
+    console.log("DEBUG — Fields:", {
+      trimmedName,
+      trimmedText,
+      trimmedSlug,
+      cleanedRating,
+    });
+
+    if (
+      !trimmedName ||
+      !trimmedText ||
+      !trimmedSlug ||
+      isNaN(cleanedRating) ||
+      cleanedRating < 1
+    ) {
+      setError("Please fill in all required fields, including rating.");
+      return;
+    }
+
+    const newComment = {
+      traveler_name: trimmedName,
+      hometown: location.trim(),
+      rating: cleanedRating,
+      travel_story: trimmedText,
+      slug: trimmedSlug,
+    };
 
     try {
       const res = await axios.post(`${API_URL}/add-comment.php`, newComment, {
@@ -48,25 +73,25 @@ const CommentSection = ({ slug }) => {
 
       if (res.data.success) {
         setComments([
-    {
-      traveler_name: name,
-      hometown: location,
-      rating,
-      travel_story: text,
-      created_at: new Date().toISOString(),
-    },
+          {
+            traveler_name: trimmedName,
+            hometown: location,
+            rating: cleanedRating,
+            travel_story: trimmedText,
+            created_at: new Date().toISOString(),
+          },
           ...comments,
         ]);
         setName("");
         setText("");
-        setRating(0);
         setLocation("");
+        setRating(0);
         setError("");
       } else {
         setError(res.data.message || "Failed to submit comment.");
       }
-    } catch (error) {
-      console.error("Error submitting comment:", error);
+    } catch (err) {
+      console.error("Error submitting comment:", err);
       setError("Network error while submitting comment.");
     }
   };
@@ -85,7 +110,7 @@ const CommentSection = ({ slug }) => {
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       )}
-      
+
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mb-4 rounded">
           <p>{error}</p>
@@ -100,8 +125,8 @@ const CommentSection = ({ slug }) => {
           </div>
         ) : (
           comments.map((c, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start">
@@ -114,33 +139,28 @@ const CommentSection = ({ slug }) => {
                     {c.rating > 0 && (
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
-                          <FaStar 
-                            key={i} 
-                            className={`text-sm ${i < c.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} 
+                          <FaStar
+                            key={i}
+                            className={`text-sm ${i < c.rating ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}`}
                           />
                         ))}
                       </div>
                     )}
                   </div>
-                  
                   {c.hometown && (
-  <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 mb-1">
-    <FaMapMarkerAlt className="mr-1" />
-    <span>{c.hometown}</span>
-  </div>
-)}
-                  
-                 <p className="text-gray-600 dark:text-gray-300 mt-2">
-  {c.travel_story}
-</p>
-
-                  
-                {new Date(c.created_at).toLocaleDateString('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric'
-})}
-
+                    <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 mb-1">
+                      <FaMapMarkerAlt className="mr-1" />
+                      <span>{c.hometown}</span>
+                    </div>
+                  )}
+                  <p className="text-gray-600 dark:text-gray-300 mt-2">{c.travel_story}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                    {new Date(c.created_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </p>
                 </div>
               </div>
             </div>
@@ -148,11 +168,10 @@ const CommentSection = ({ slug }) => {
         )}
       </div>
 
+      {/* Form */}
       <div className="mt-8 space-y-4">
-        <h4 className="text-lg font-semibold text-gray-800 dark:text-white">
-          Share Your Journey
-        </h4>
-        
+        <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Share Your Journey</h4>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -166,7 +185,7 @@ const CommentSection = ({ slug }) => {
               className="w-full p-3 rounded-lg border border-gray-300 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Where did you visit from?
@@ -180,7 +199,7 @@ const CommentSection = ({ slug }) => {
             />
           </div>
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Your Rating
@@ -190,23 +209,21 @@ const CommentSection = ({ slug }) => {
               <FaStar
                 key={star}
                 className={`text-2xl cursor-pointer ${
-                  star <= rating
-                    ? 'text-yellow-400'
-                    : 'text-gray-300 dark:text-gray-600'
+                  star <= rating ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"
                 }`}
                 onClick={() => setRating(star)}
               />
             ))}
           </div>
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Your Travel Story
           </label>
           <textarea
             rows={4}
-            placeholder="Tell us about your experience... What surprised you? Any hidden gems to share? Tips for future visitors?"
+            placeholder="Tell us about your experience..."
             value={text}
             onChange={(e) => setText(e.target.value)}
             className="w-full p-3 rounded-lg border border-gray-300 dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -220,7 +237,7 @@ const CommentSection = ({ slug }) => {
           <FaPaperPlane className="mr-2" />
           Share Your Adventure
         </button>
-        
+
         <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
           Your insights help create better travel experiences for everyone!
         </p>

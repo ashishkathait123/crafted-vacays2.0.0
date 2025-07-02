@@ -458,7 +458,8 @@ const flight_included = raw_flight_included === "1" || raw_flight_included === 1
             )}
 
             <Box>
-              <CommentSection />
+             <CommentSection slug={slug} />
+
             </Box>
           </Box>
          
