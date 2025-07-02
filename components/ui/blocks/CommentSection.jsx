@@ -11,7 +11,7 @@ const CommentSection = ({ slug }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const API_URL = "http://localhost/craft"; // ✅ Update to your actual backend URL
+  const API_URL = "https://craftedvacays.grandeurnet.in/"; // ✅ Update to your actual backend URL
 
   // Fetch comments on load
   useEffect(() => {
